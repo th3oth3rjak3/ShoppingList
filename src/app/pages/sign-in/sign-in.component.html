@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="row">
+    <h1 class="header">{{ appName }} Sign In</h1>
+  </div>
+  <div class="col">
+    <!-- Calling GoogleAuth Api from AuthService -->
+    <div class="formGroup">
+      <button
+        mat-raised-button
+        type="button"
+        class="btn"
+        (click)="authService.GoogleAuth()"
+      >
+        <img class="google-logo" src="assets/Google.svg" />
+        <span class="google-text">Log in with Google</span>
+      </button>
+    </div>
+  </div>
+</div>

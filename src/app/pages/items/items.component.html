@@ -1,0 +1,121 @@
+<div class="container">
+  <div class="row">
+    <h1 class="header">{{ appName }} Items</h1>
+  </div>
+
+  <form (ngSubmit)="(!editing ? addItem(formDirective) : editIndividualItem(formDirective))" [formGroup]="itemFormGroup" #formDirective="ngForm">
+    <div class="row form-inputs">
+      <mat-form-field appearance="outline">
+        <mat-label>Item Name</mat-label>
+        <input
+          matInput
+          placeholder="Enter Item Name"
+          [formControl]="itemNameControl"
+          required
+        /><mat-error *ngIf="!itemNameControl.valid">{{
+          "Item Name is required"
+        }}</mat-error></mat-form-field
+      ><mat-form-field appearance="outline">
+        <mat-label>Choose a Category</mat-label>
+        <mat-select
+          [formControl]="categoryControl"
+          (selectionChange)="subcategoryControl.setValue(null)"
+          required
+        >
+          <mat-option *ngIf="categories.length"></mat-option>
+          <ng-container *ngFor="let category of categories">
+            <mat-option value="{{ category }}">{{
+              category
+            }}</mat-option></ng-container
+          > </mat-select
+        ><mat-error *ngIf="!categoryControl.valid">{{
+          "Category is required"
+        }}</mat-error></mat-form-field
+      ><mat-form-field appearance="outline">
+        <mat-label>Choose a Sub-Category</mat-label>
+        <mat-select [formControl]="subcategoryControl" required>
+          <ng-container
+            *ngFor="
+              let subcategory of subcategories[
+                categoryControl.value === null ? '' : categoryControl.value
+              ]
+            "
+          >
+            <mat-option value="{{ subcategory }}">{{
+              subcategory
+            }}</mat-option></ng-container
+          > </mat-select
+        ><mat-error *ngIf="!subcategoryControl.valid">{{
+          "Sub-Category is required"
+        }}</mat-error></mat-form-field
+      >
+    </div>
+    <div class="row">
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!itemFormGroup.valid"
+      >
+        {{ editing ? "Edit Item" : "Add Item"}}</button
+      ><button mat-raised-button type="button" (click)="resetForm(formDirective)" *ngIf="!editing">
+        Reset
+      </button>
+      <button mat-raised-button type="button" (click)="cancelEditing(formDirective)" *ngIf="editing">
+        Cancel
+      </button>
+    </div>
+  </form>
+  <div class="row">
+    <table mat-table [dataSource]="IndividualItems" class="mat-elevation-z8">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [ngClass]="{
+          selected: selectedRow ? selectedRow._id === row._id : false
+        }"
+        (click)="updateSelectedRow(row)"
+      ></tr>
+      <ng-container matColumnDef="item-name">
+        <th mat-header-cell *matHeaderCellDef>Item Name</th>
+        <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+        <td mat-cell *matCellDef="let item">{{ item.category }}</td>
+      </ng-container>
+      <ng-container matColumnDef="subcategory">
+        <th mat-header-cell *matHeaderCellDef>Sub-Category</th>
+        <td mat-cell *matCellDef="let item">{{ item.subcategory }}</td>
+      </ng-container>
+      <ng-container matColumnDef="purchased">
+        <th mat-header-cell *matHeaderCellDef>Purchased</th>
+        <td mat-cell *matCellDef="let item">{{ item.purchased }}</td>
+      </ng-container>
+      <ng-container matColumnDef="item-id">
+        <th mat-header-cell *matHeaderCellDef>Item ID</th>
+        <td mat-cell *matCellDef="let item">{{ item._id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="user-id">
+        <th mat-header-cell *matHeaderCellDef>User ID</th>
+        <td mat-cell *matCellDef="let item">{{ item.uid }}</td>
+      </ng-container>
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef>Edit</th>
+        <td mat-cell *matCellDef="let item" (click)="beginEditingIndividualItem(item)">
+          <mat-icon class="icon">edit</mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <td
+          mat-cell
+          *matCellDef="let item"
+          (click)="deleteIndividualItem(item)"
+        >
+          <mat-icon class="icon">delete</mat-icon>
+        </td>
+      </ng-container>
+    </table>
+  </div>
+</div>

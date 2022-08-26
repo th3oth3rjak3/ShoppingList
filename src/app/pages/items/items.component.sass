@@ -1,0 +1,53 @@
+.row
+    display: flex
+    width: 100%
+    justify-content: center
+    text-align: center
+
+.header
+    margin-top: 40px
+    margin-bottom: 50px
+    font-size: 20pt
+
+table
+    margin-top: 20px
+    width: 80%
+    text-align: left
+
+.mat-row
+    $easeTime: 0.3s
+    &:hover
+        -webkit-filter: brightness(130%)
+        -webkit-transition: all $easeTime ease
+        -moz-transition: all $easeTime ease
+        -o-transition: all $easeTime ease
+        -ms-transition: all $easeTime ease
+        transition: all $easeTime ease
+
+    &.selected
+        -webkit-filter: brightness(130%)
+        -webkit-transition: all $easeTime ease
+        -moz-transition: all $easeTime ease
+        -o-transition: all $easeTime ease
+        -ms-transition: all $easeTime ease
+        transition: all $easeTime ease
+
+.mat-form-field
+    margin: 0 10px
+
+button
+    width: 100px
+    margin: 0 10px
+
+    &:hover
+        transform: scale(1.05)
+
+    &:active
+        transform: scale(0.95)
+
+.form-inputs
+    margin-bottom: 10px
+
+.icon
+    &:hover
+        cursor: pointer
