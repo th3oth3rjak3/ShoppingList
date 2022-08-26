@@ -1,0 +1,13 @@
+import { NgModule } from '@angular/core';
+import { HomeRoutingModule } from './home-routing.module';
+import { SharedModule } from 'src/shared/shared.module';
+
+
+@NgModule({
+  declarations: [HomeRoutingModule.components],
+  imports: [
+    SharedModule,
+    HomeRoutingModule
+  ]
+})
+export class HomeModule { }

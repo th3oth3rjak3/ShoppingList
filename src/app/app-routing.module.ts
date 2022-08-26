@@ -1,69 +1,59 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { CategoriesComponent } from './pages/categories/categories.component';
-import { HomeComponent } from './pages/home/home.component';
-import { ItemsComponent } from './pages/items/items.component';
-import { PagenotfoundComponent } from './pages/pagenotfound/pagenotfound.component';
-import { SettingsComponent } from './pages/settings/settings.component';
-import { ShopComponent } from './pages/shop/shop.component';
-import { StoresComponent } from './pages/stores/stores.component';
-import { DataService } from './services/data.service';
-import { AuthGuard } from './components/auth.guard';
-import { SignInComponent } from './pages/sign-in/sign-in.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-
-const data = new DataService();
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { DataService } from '../services/data.service';
+import { AuthGuard } from './auth.guard';
+import { DashboardComponent } from '../components/dashboard/dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
-  { path: 'sign-in', component: SignInComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+  {
+    path: 'sign-in',
+    loadChildren: () =>
+      import('../sign-in/sign-in.module').then((m) => m.SignInModule),
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: 'home',
-    component: HomeComponent,
+    loadChildren: () => import('../home/home.module').then((m) => m.HomeModule),
     canActivate: [AuthGuard],
-    title: 'Home | ' + data.appName,
+    title: 'Home | ' + DataService.appName,
   },
   {
     path: 'items',
-    component: ItemsComponent,
+    loadChildren: () =>
+      import('../items/items.module').then((m) => m.ItemsModule),
     canActivate: [AuthGuard],
-    title: 'Items | ' + data.appName,
+    title: 'Items | ' + DataService.appName,
   },
   {
     path: 'shop',
-    component: ShopComponent,
+    loadChildren: () => import('../shop/shop.module').then((m) => m.ShopModule),
     canActivate: [AuthGuard],
-    title: 'Shop | ' + data.appName,
+    title: 'Shop | ' + DataService.appName,
   },
   {
     path: 'settings',
-    component: SettingsComponent,
+    loadChildren: () =>
+      import('../settings/settings.module').then((m) => m.SettingsModule),
     canActivate: [AuthGuard],
-    title: 'Settings | ' + data.appName,
-  },
-  {
-    path: 'settings/categories',
-    component: CategoriesComponent,
-    canActivate: [AuthGuard],
-    title: 'Manage Categories | ' + data.appName,
-  },
-  {
-    path: 'settings/stores',
-    component: StoresComponent,
-    canActivate: [AuthGuard],
-    title: 'Manage Stores | ' + data.appName,
+    title: 'Settings | ' + DataService.appName,
   },
   {
     path: '**',
-    component: PagenotfoundComponent,
+    loadChildren: () => import('../pagenotfound/pagenotfound.module').then(m => m.PagenotfoundModule),
     canActivate: [AuthGuard],
-    title: 'Page Not Found | ' + data.appName,
+    title: 'Page Not Found | ' + DataService.appName,
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
