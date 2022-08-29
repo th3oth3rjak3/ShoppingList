@@ -3,62 +3,70 @@ import {
   getAuth,
   signOut,
   signInWithPopup,
-  User
+  setPersistence,
+  browserSessionPersistence,
+  onAuthStateChanged,
+  Auth
 } from 'firebase/auth';
 import { Injectable } from '@angular/core';
 import * as auth from 'firebase/auth';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthService {
-  userData: any; // Save logged in user data
+import { Observable } from 'rxjs';
+@Injectable({providedIn: 'root'})
+export class AuthService{
+  userData: any = null; // Save logged in user data
   firebaseApp = initializeApp(environment.firebaseConfig);
-  auth = getAuth(this.firebaseApp);
+  myAuth: Auth;
 
-  constructor(public router: Router) {}
+  constructor(public router: Router) {
 
-  StoreUser(auth: auth.UserCredential) {
-    localStorage.setItem('user', JSON.stringify(auth.user));
+    this.myAuth = getAuth(this.firebaseApp);
+    onAuthStateChanged(this.myAuth, (user) => {
+      if (user) {
+        this.userData = user;
+      } else {
+        this.userData = null;
+      }
+    });
+    setPersistence(this.myAuth, browserSessionPersistence);
   }
 
-  GetUser(): User | null {
-    const user = localStorage.getItem('user');
-    if (user) {
-      return JSON.parse(user);
-    } else {
-      return null;
-    }
-  }
-
-  // Returns true when user is looged in and email is verified
+  // Returns true when user is logged in
   get isLoggedIn(): boolean {
-    const user = this.GetUser();
-    return user !== null && user.emailVerified !== false ? true : false;
+    return (this.userData ? true : false);
   }
   // Sign in with Google
-  GoogleAuth() {
-    this.AuthLogin(new auth.GoogleAuthProvider());
+  async GoogleAuth(returnUrl: string) {
+    const provider = new auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account',
+    })
+    await this.AuthLogin(provider, returnUrl);
   }
   // Auth logic to run auth providers
-  async AuthLogin(provider: any) {
-    signInWithPopup(this.auth, provider)
-      .then((result: auth.UserCredential | null) => {
-        if (result) {
-          this.StoreUser(result);
-          this.router.navigate(['home']);
-        }
-      })
-      .catch((error) => {
-        window.alert(error);
-      });
+  async AuthLogin(provider: any, returnUrl: string) {
+      signInWithPopup(this.myAuth, provider)
+        .then((result: auth.UserCredential | null) => {
+          if (result) {
+            // TODO: Check if user is in user database collection
+            // TODO: If so, navigate home, else go to user settings page
+            this.router.navigate([returnUrl]);
+          }
+        })
+        .catch((error) => {
+          window.alert(error);
+        });
+  }
+
+  get user() {
+    return this.userData;
   }
 
   // Sign out
   SignOut() {
-    signOut(this.auth).then(() => {
-      localStorage.removeItem('user');
+    signOut(this.myAuth).then(() => {
+      this.userData = null;
       this.router.navigate(['sign-in']);
     });
   }

@@ -14,9 +14,9 @@
     &:active
         transform: scale(.95)
 
-.navbar
+.toolbar
     justify-content: space-between
-    width: 100%
+    max-width: 100%
     height: 60px
     box-shadow: 0 5px 15px black !important
     position: fixed
@@ -33,8 +33,23 @@
     margin-left: 5px
     margin-right: 5px
 
-.menu-icon
-    margin-left: 30px
-
 .theme-icon:hover
     cursor: pointer
+
+.menu-icon
+    &:hover
+        cursor: pointer
+    &:active
+        cursor: pointer
+    &:target
+        cursor: pointer
+
+.sage
+    display: flex
+    align-content: center
+
+.jake
+    margin-left: 18px
+    line-height: 40px
+    font-size: 25px
+    margin-bottom: 0

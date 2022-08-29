@@ -1,22 +1,20 @@
-.row
-    display: flex
-    width: 100%
+.col
     justify-content: center
-    text-align: center
 
-.header
-    margin-top: 40px
-    margin-bottom: 50px
-    font-size: 20pt
+.container
+    padding-right: 0
+    padding-left: 0
+
 
 table
     margin-top: 20px
-    width: 80%
-    text-align: left
+    text-align: center
+    padding-right: 0
 
 .mat-row
-    $easeTime: 0.3s
+    $easeTime: 0.2s
     &:hover
+        cursor: pointer
         -webkit-filter: brightness(130%)
         -webkit-transition: all $easeTime ease
         -moz-transition: all $easeTime ease
@@ -33,7 +31,7 @@ table
         transition: all $easeTime ease
 
 .mat-form-field
-    margin: 0 10px
+    display: inline
 
 button
     width: 100px
@@ -51,3 +49,20 @@ button
 .icon
     &:hover
         cursor: pointer
+
+.mat-column-item-name
+    text-align: center
+
+.mat-column-category
+    text-align: center
+
+.mat-column-subcategory
+    text-align: center
+
+.mat-column-edit
+    width: 60px
+    text-align: center
+
+.mat-column-delete
+    width: 60px
+    text-align: center

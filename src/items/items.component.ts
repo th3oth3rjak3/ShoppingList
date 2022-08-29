@@ -1,14 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormGroupDirective,
-  NgForm,
-  NgModel,
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/services/auth.service';
-import { DataService } from 'src/services/data.service';
 import { FunctionsService } from 'src/services/functions.service';
 
 @Component({
@@ -16,7 +13,7 @@ import { FunctionsService } from 'src/services/functions.service';
   templateUrl: './items.component.html',
   styleUrls: ['./items.component.sass'],
 })
-export class ItemsComponent implements OnInit {
+export class ItemsComponent implements OnInit, AfterViewInit, AfterContentInit {
   // Form Fields
   itemNameControl: FormControl = new FormControl(null, [Validators.required]);
   categoryControl: FormControl = new FormControl(null, [Validators.required]);
@@ -29,24 +26,19 @@ export class ItemsComponent implements OnInit {
     name: this.itemNameControl,
     category: this.categoryControl,
     subcategory: this.subcategoryControl,
-});
+  });
 
-  // App Name
-  appName = DataService.appName;
-  
   // Backing Variables
   IndividualItems: any[] = [];
   selectedRow: any = null;
   editing: boolean = false;
-  
+  editingItemId: string = '';
+
   // Column ID's for the table
   displayedColumns: string[] = [
     'item-name',
     'category',
     'subcategory',
-    'purchased',
-    'item-id',
-    'user-id',
     'edit',
     'delete',
   ];
@@ -59,13 +51,14 @@ export class ItemsComponent implements OnInit {
     Beauty: ['Hair Products', 'Other Beauty'],
   };
 
-  constructor(
-    private auth: AuthService,
-    private functions: FunctionsService,
-  ) {}
+  constructor(private auth: AuthService, private functions: FunctionsService) { }
 
-  ngOnInit(): void {
-    this.getIndividualShoppingListItems("");
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {}
+
+  ngAfterContentInit(): void {
+      this.getIndividualShoppingListItems('');
   }
 
   resetForm(formDirective: FormGroupDirective): void {
@@ -81,19 +74,20 @@ export class ItemsComponent implements OnInit {
       name: this.itemNameControl.value,
       category: this.categoryControl.value,
       subcategory: this.subcategoryControl.value,
-      purchased: false,
     };
     this.functions
       .addIndividualShoppingListItem(newItem)
-      .then(() => this.getIndividualShoppingListItems(""));
+      .then(() => this.getIndividualShoppingListItems(''));
     this.resetForm(formDirective);
   }
 
-  getIndividualShoppingListItems(filter: string): void {
-    const user = this.auth.GetUser();
-    if (user) {
+  getIndividualShoppingListItems(filter: string = ''): void {
+    
+    if (this.auth.isLoggedIn) {
       this.functions.getIndividualShoppingListItems().then((result: any) => {
-        this.IndividualItems = result.data.filter((item: any) => item._id !== filter);
+        this.IndividualItems = result.data.filter(
+          (item: any) => item._id !== filter
+        );
       });
     } else {
       console.error('You must be logged in to use this feature.');
@@ -108,33 +102,45 @@ export class ItemsComponent implements OnInit {
     }
   }
 
-  beginEditingIndividualItem(item: any) : void {
+  beginEditingIndividualItem(item: any): void {
     this.editing = true;
     this.itemNameControl.setValue(item.name);
     this.categoryControl.setValue(item.category);
     this.subcategoryControl.setValue(item.subcategory);
+    this.editingItemId = item._id;
     this.getIndividualShoppingListItems(item._id);
   }
 
-  cancelEditing(formDirective: FormGroupDirective) : void {
+  cancelEditing(formDirective: FormGroupDirective): void {
     this.editing = false;
-    this.getIndividualShoppingListItems("");
+    this.editingItemId = '';
+    this.getIndividualShoppingListItems('');
     this.resetForm(formDirective);
   }
 
   editIndividualItem(formDirective: FormGroupDirective): void {
     // TODO: update this.
     this.editing = false;
-    console.log('pretending to submit');
-    this.resetForm(formDirective);
-    this.getIndividualShoppingListItems("");
+    const data = {
+      id: this.editingItemId,
+      document: {
+        name: this.itemNameControl.value,
+        category: this.categoryControl.value,
+        subcategory: this.subcategoryControl.value,
+      },
+    };
+    this.functions.editIndividualShoppingListItem(data).then(() => {
+      this.editingItemId = '';
+      this.resetForm(formDirective);
+      this.getIndividualShoppingListItems('');
+    });
   }
 
   deleteIndividualItem(item: any): void {
     if (confirm('Are you sure you wish to delete ' + item.name + '?')) {
       this.functions
         .deleteIndividualShoppingListItem(item._id)
-        .then(() => this.getIndividualShoppingListItems(""));
+        .then(() => this.getIndividualShoppingListItems(''));
     }
   }
 }

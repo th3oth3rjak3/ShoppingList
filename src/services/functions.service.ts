@@ -13,7 +13,7 @@ export class FunctionsService {
   
 
   constructor() {
-    connectFunctionsEmulator(this.functions, "localhost", 5000);
+    connectFunctionsEmulator(this.functions, "localhost", 5001);
   }
 
   getHello(data: any) : Promise<HttpsCallableResult> {
@@ -34,6 +34,26 @@ export class FunctionsService {
   deleteIndividualShoppingListItem(id: string) : Promise<HttpsCallableResult> {
     const deleteIndividualShoppingListItem = httpsCallable(this.functions, 'deleteIndividualShoppingListItem');
     return deleteIndividualShoppingListItem(id);
+  }
+
+  editIndividualShoppingListItem(data: any) : Promise<HttpsCallableResult> {
+    const editIndividualShoppingListItem = httpsCallable(this.functions, 'editIndividualShoppingListItem');
+    return editIndividualShoppingListItem(data);
+  }
+
+  getUser() : Promise<HttpsCallableResult> {
+    const getUser = httpsCallable(this.functions, 'getUser');
+    return getUser();
+  }
+
+  addUser(data: any) : Promise<HttpsCallableResult> {
+    const addUser = httpsCallable(this.functions, 'addUser');
+    return addUser(data);
+  }
+
+  editUser(data: any) : Promise<HttpsCallableResult> {
+    const editUser = httpsCallable(this.functions, 'editUser');
+    return editUser(data);
   }
 
 }

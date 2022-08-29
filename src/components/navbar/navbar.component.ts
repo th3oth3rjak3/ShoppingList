@@ -1,19 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { DataService } from 'src/services/data.service';
 import { AuthService } from 'src/services/auth.service';
+import { User } from 'src/user/user.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.sass'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, AfterContentInit, OnDestroy {
+  appName: string = '';
+  userData: User = DataService.newUser;
+  sub: Subscription = new Subscription();
 
-  appName: string = "";
-
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private data: DataService) {}
 
   ngOnInit(): void {
+    this.data.userData.subscribe((user: User) => (this.userData = user));
+    this.data.getUser();
+  }
+
+  ngAfterContentInit(): void {
     if (this.darkMode) {
       this.enableDarkMode();
     }
@@ -29,29 +37,21 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  saveTheme(theme: string): void {
-    window.localStorage.setItem('hathaway-home-theme', theme);
-  }
-
-  getTheme(): string {
-    let theme = window.localStorage.getItem('hathaway-home-theme');
-    if (!theme) {
-      theme = 'light';
-    }
-    return theme;
-  }
-
   enableDarkMode(): void {
-    this.saveTheme('dark');
+    this.data.saveTheme('dark');
     document.body.classList.add('dark-theme');
   }
 
   disableDarkMode(): void {
-    this.saveTheme('light');
+    this.data.saveTheme('light');
     document.body.classList.remove('dark-theme');
   }
 
   get darkMode(): boolean {
-    return this.getTheme() === 'dark';
+    return window.localStorage.getItem('hathaway-home-theme') === 'dark';
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 }

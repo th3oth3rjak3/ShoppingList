@@ -27,15 +27,14 @@ exports.getIndividualShoppingListItems = functions.https.onCall(
       const docList = [];
       const result = await db
         .collection("IndividualShoppingListItems")
-        .orderBy("category")
-        .orderBy("subcategory")
+        .where("uid", "==", userId)
         .get();
       result.forEach((doc) => {
         const fullDoc = doc.data();
         fullDoc._id = doc.id;
         docList.push(fullDoc);
       });
-      return docList.filter((doc) => doc.uid === userId);
+      return docList;
     }
   }
 );
@@ -58,3 +57,42 @@ exports.deleteIndividualShoppingListItem = functions.https.onCall(
     }
   }
 );
+
+exports.editIndividualShoppingListItem = functions.https.onCall(
+  async (data, context) => {
+    const userId = context.auth.uid;
+    if (userId) {
+      await db
+        .collection("IndividualShoppingListItems")
+        .doc(data.id)
+        .update(data.document);
+    }
+  }
+);
+
+exports.addUser = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    data.uid = userId;
+    await db.collection("Users").doc(userId).set(data);
+  }
+});
+
+exports.getUser = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    console.log(data);
+    const result = await db
+      .collection("Users")
+      .doc(userId)
+      .get();
+    return result.data();
+  }
+});
+
+exports.editUser = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    await db.collection("Users").doc(userId).update(data);
+  }
+});

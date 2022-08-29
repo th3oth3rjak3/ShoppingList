@@ -1,20 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentChecked, AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Data, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
 import { FunctionsService } from 'src/services/functions.service';
+import { User } from 'src/user/user.model';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.sass'],
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnInit, AfterContentChecked, OnDestroy {
   appName: string = DataService.appName;
+  returnUrl: string = 'home';
+  sub: Subscription = new Subscription;
+  userData: User = DataService.newUser;
 
   constructor(
     public authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private functions: FunctionsService,
+    private data: DataService,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const url = this.route.snapshot.queryParams['returnUrl'];
+    if (url?.length){
+      this.returnUrl = url;
+    }
 
+    this.sub = this.data.userData.subscribe((user: User) => this.userData = user);
+  }
+
+  ngAfterContentChecked(): void {
+      if (this.authService.isLoggedIn) {
+        this.router.navigateByUrl(this.returnUrl);
+      }
+  }
+
+  ngOnDestroy(): void {
+      this.sub.unsubscribe();
+  }
+
+  googleAuth() {
+    this.authService.GoogleAuth(this.returnUrl).then(() => {
+      this.data.getUser();
+      this.router.navigateByUrl(this.returnUrl);
+    });
+  }
 }

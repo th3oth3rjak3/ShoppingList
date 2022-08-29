@@ -44,3 +44,6 @@ functions/serviceAccount.json
 src/environments/environment.prod.ts
 src/environments/environment.ts
 
+functions/ui-debug.log
+.gitignore
+functions/firebase-debug.log

@@ -3,13 +3,15 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { AuthGuard } from './auth.guard';
 import { DashboardComponent } from '../components/dashboard/dashboard.component';
+import { AuthService } from 'src/services/auth.service';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'sign-in',
     loadChildren: () =>
       import('../sign-in/sign-in.module').then((m) => m.SignInModule),
+    title: 'Sign In | ' + DataService.appName,
   },
   {
     path: 'dashboard',
@@ -30,21 +32,24 @@ const routes: Routes = [
     title: 'Items | ' + DataService.appName,
   },
   {
-    path: 'shop',
-    loadChildren: () => import('../shop/shop.module').then((m) => m.ShopModule),
+    path: 'lists',
+    loadChildren: () =>
+      import('../list-view/list-view.module').then((m) => m.ListViewModule),
     canActivate: [AuthGuard],
-    title: 'Shop | ' + DataService.appName,
+    title: 'Lists | ' + DataService.appName,
   },
   {
     path: 'settings',
     loadChildren: () =>
       import('../settings/settings.module').then((m) => m.SettingsModule),
     canActivate: [AuthGuard],
-    title: 'Settings | ' + DataService.appName,
   },
   {
     path: '**',
-    loadChildren: () => import('../pagenotfound/pagenotfound.module').then(m => m.PagenotfoundModule),
+    loadChildren: () =>
+      import('../pagenotfound/pagenotfound.module').then(
+        (m) => m.PagenotfoundModule
+      ),
     canActivate: [AuthGuard],
     title: 'Page Not Found | ' + DataService.appName,
   },
@@ -56,4 +61,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+  constructor(public authService: AuthService) {}
+}

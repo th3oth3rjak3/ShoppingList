@@ -8,27 +8,29 @@ const routes: Routes = [
   {
     path: '',
     component: SettingsComponent,
+    canActivate: [AuthGuard],
+    title: "Settings | " + DataService.appName,
   },
   {
     path: 'categories',
     loadChildren: () =>
       import('../categories/categories.module').then((m) => m.CategoriesModule),
-    canActivate: [AuthGuard],
-    title: 'Manage Categories | ' + DataService.appName,
   },
   {
     path: 'stores',
     loadChildren: () =>
       import('../stores/stores.module').then((m) => m.StoresModule),
-    canActivate: [AuthGuard],
-    title: 'Manage Stores | ' + DataService.appName,
+  },
+  {
+    path: 'user',
+    loadChildren: () => import('../user/user.module').then((m) => m.UserModule),
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: []
+  providers: [],
 })
 export class SettingsRoutingModule {
   static components = [SettingsComponent];
