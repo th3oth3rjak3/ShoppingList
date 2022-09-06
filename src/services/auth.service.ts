@@ -13,15 +13,13 @@ import * as auth from 'firebase/auth';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { DataService } from './data.service';
-import { UserComponent } from 'src/user/user.component';
-@Injectable({providedIn: 'root'})
-export class AuthService{
+@Injectable({ providedIn: 'root' })
+export class AuthService {
   userData: any = null; // Save logged in user data
   firebaseApp = initializeApp(environment.firebaseConfig);
   myAuth: Auth = getAuth(this.firebaseApp);
 
   constructor(public router: Router, private data: DataService) {
-
     onAuthStateChanged(this.myAuth, async (user) => {
       const thisUser = await user;
       if (thisUser) {
@@ -33,7 +31,7 @@ export class AuthService{
           uid: thisUser.uid!,
           photoUrl: thisUser.photoURL!,
           phone: thisUser.phoneNumber!,
-          theme: window.localStorage.getItem('hathaway-home-theme') ?? "light"
+          theme: window.localStorage.getItem('hathaway-home-theme') ?? 'light',
         };
       } else {
         this.userData = null;
@@ -44,29 +42,27 @@ export class AuthService{
 
   // Returns true when user is logged in
   get isLoggedIn(): boolean {
-    return (this.userData ? true : false);
+    return this.userData ? true : false;
   }
   // Sign in with Google
   async GoogleAuth(returnUrl: string) {
     const provider = new auth.GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account',
-    })
+    });
     await this.AuthLogin(provider, returnUrl);
   }
   // Auth logic to run auth providers
   async AuthLogin(provider: any, returnUrl: string) {
-      signInWithPopup(this.myAuth, provider)
-        .then((result: auth.UserCredential | null) => {
-          if (result) {
-            // TODO: Check if user is in user database collection
-            // TODO: If so, navigate home, else go to user settings page
-            this.router.navigate([returnUrl]);
-          }
-        })
-        .catch((error) => {
-          window.alert(error);
-        });
+    signInWithPopup(this.myAuth, provider)
+      .then((result: auth.UserCredential | null) => {
+        if (result) {
+          this.router.navigate([returnUrl]);
+        }
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
   }
 
   get user() {

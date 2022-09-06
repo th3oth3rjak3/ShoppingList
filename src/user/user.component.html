@@ -1,6 +1,38 @@
 <div class="container">
   <div class="row">
     <h1 class="header">User Settings</h1>
-    <p>{{ userData.name }}</p>
+  </div>
+  <div class="row user-heading">
+    <img
+      referrerpolicy="no-referrer"
+      src="{{ userData.photoUrl }}"
+      class="user-photo"
+    />
+    <h2 class="username">{{ userData.name }}</h2>
+  </div>
+  <div class="row edit-fields">
+    <div class="col-12">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput appearance="outline" [formControl]="name" />
+        <mat-error>Name is required</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col-12">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput appearance="outline" [formControl]="email" />
+        <mat-error>Email is required</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>Photo Url</mat-label>
+        <input matInput appearance="outline" [formControl]="photoUrl" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row button-row">
+    <p>These settings are managed in your Google Account Settings.</p>
   </div>
 </div>
