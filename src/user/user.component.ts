@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
-import { FunctionsService } from 'src/services/functions.service';
 import { User } from './user.model';
 
 @Component({
@@ -14,9 +12,10 @@ export class UserComponent implements OnInit, OnDestroy {
   userData: User = DataService.newUser;
   sub: Subscription = new Subscription();
 
+
+  // TODO: Need to figure out how to let the user know that their preferences haven't been saved or just save them automatically.
+
   constructor(
-    private functions: FunctionsService,
-    private authService: AuthService,
     public data: DataService
   ) {}
 
@@ -25,8 +24,6 @@ export class UserComponent implements OnInit, OnDestroy {
       this.userData = user;
       console.log(this.userData);
     });
-
-    this.data.getUser();
   }
 
   ngOnDestroy(): void {

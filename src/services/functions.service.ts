@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFunctions, httpsCallable, HttpsCallableResult, connectFunctionsEmulator } from 'firebase/functions';
+import { getFunctions, httpsCallable, HttpsCallableResult, connectFunctionsEmulator, Functions } from 'firebase/functions';
 import { environment } from 'src/environments/environment';
+import { User } from 'src/user/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +22,9 @@ export class FunctionsService {
     return helloWorld(data);
   }
 
-  getIndividualShoppingListItems() : Promise<HttpsCallableResult> {
+  getIndividualShoppingListItems(filter: string | null = null) : Promise<HttpsCallableResult> {
     const getShoppingListItems = httpsCallable(this.functions, 'getIndividualShoppingListItems');
-    return getShoppingListItems();
+    return getShoppingListItems({filter: filter});
   }
 
   addIndividualShoppingListItem(data: any) : Promise<HttpsCallableResult> {
@@ -31,9 +32,9 @@ export class FunctionsService {
     return addIndividualShoppingListItem(data);
   }
 
-  deleteIndividualShoppingListItem(id: string) : Promise<HttpsCallableResult> {
-    const deleteIndividualShoppingListItem = httpsCallable(this.functions, 'deleteIndividualShoppingListItem');
-    return deleteIndividualShoppingListItem(id);
+  deleteIndividualShoppingListItems(ids: string[]) : Promise<HttpsCallableResult> {
+    const deleteIndividualShoppingListItems = httpsCallable(this.functions, 'deleteIndividualShoppingListItems');
+    return deleteIndividualShoppingListItems(ids);
   }
 
   editIndividualShoppingListItem(data: any) : Promise<HttpsCallableResult> {
@@ -54,6 +55,36 @@ export class FunctionsService {
   editUser(data: any) : Promise<HttpsCallableResult> {
     const editUser = httpsCallable(this.functions, 'editUser');
     return editUser(data);
+  }
+
+  addIndividualList(data: any) : Promise<HttpsCallableResult> {
+    const addIndividualList = httpsCallable(this.functions, 'addIndividualList');
+    return addIndividualList(data);
+  }
+
+  updateIndividualList(data: any) : Promise<HttpsCallableResult> {
+    const updateIndividualList = httpsCallable(this.functions, 'updateIndividualList');
+    return updateIndividualList(data);
+  }
+
+  getIndividualLists(filter: string | null = null) : Promise<HttpsCallableResult> {
+    const getIndividualLists = httpsCallable(this.functions, 'getIndividualLists');
+    return getIndividualLists({filter: filter});
+  }
+
+  deleteIndividualList(filter: string) : Promise<HttpsCallableResult> {
+    const deleteIndividualList = httpsCallable(this.functions, 'deleteIndividualList');
+    return deleteIndividualList({_id: filter});
+  }
+
+  getCategories(): Promise<HttpsCallableResult>{
+    const getCategories = httpsCallable(this.functions, 'getCategories');
+    return getCategories();
+  }
+
+  addCategories(categories: string[]): Promise<HttpsCallableResult>{
+    const addCategories = httpsCallable(this.functions, 'addCategories');
+    return addCategories({categories: categories});
   }
 
 }

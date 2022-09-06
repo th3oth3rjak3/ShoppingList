@@ -3,8 +3,34 @@
     <h1 class="header">My Lists</h1>
   </div>
   <div class="row" *ngFor="let list of lists; let i = index">
-    <mat-card class="lists-card" routerLink="{{ list.path }}">{{
+    <mat-card class="lists-card" (click)="navigate(list._id)">{{
       list.title
     }}</mat-card>
   </div>
+</div>
+<div class="list-fab">
+  <button
+    mat-fab
+    class="list-fab-button"
+    color="green"
+    (click)="openAddListBottomSheet()"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+  <button
+    mat-fab
+    class="list-fab-button"
+    color="gray"
+    (click)="openEditListBottomSheet()"
+  >
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button
+    mat-fab
+    class="list-fab-button"
+    color="warn"
+    (click)="openDeleteListBottomSheet()"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
 </div>

@@ -1,11 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ListComponent } from 'src/list/list.component';
 import { ListViewComponent } from './list-view.component';
 
 const routes: Routes = [
-  { path: '', component: ListViewComponent },
-  { path: ':id', component: ListComponent },
+  {
+    path: '',
+    component: ListViewComponent
+  },
+  {
+    path: ':id',
+    loadChildren: () =>
+      import('../list/list.module').then((m) => m.ListModule),
+  },
 ];
 
 @NgModule({

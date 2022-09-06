@@ -4,15 +4,15 @@
 @import '~@angular/material/theming'
 @include mat-core()
 $my-app-primary: mat-palette($mat-indigo)
-$my-app-accent: mat-palette($mat-pink, 400)
-$my-app-warn: mat-palette($mat-deep-orange)
+$my-app-accent: mat-palette($mat-grey, 400)
+$my-app-warn: mat-palette($mat-red, 900)
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn)
 @include angular-material-theme($my-app-theme)
 
 .dark-theme
   $alternate-primary: mat-palette($mat-teal)
   $alternate-accent: mat-palette($mat-grey, 400)
-  $alternate-warn: mat-palette($mat-deep-orange)
+  $alternate-warn: mat-palette($mat-red, 900)
   $alternate-theme: mat-dark-theme($alternate-primary, $alternate-accent, $alternate-warn)
   @include angular-material-theme($alternate-theme)
 
@@ -34,5 +34,7 @@ body
   margin-left: 0
 
 .header
-    padding-top: 80px
-    font-size: 20pt
+    padding-top: 100px
+    margin-bottom: 40px !important
+    font-size: 28pt !important
+    text-decoration: underline

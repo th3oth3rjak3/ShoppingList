@@ -12,19 +12,29 @@ import { Injectable } from '@angular/core';
 import * as auth from 'firebase/auth';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { DataService } from './data.service';
+import { UserComponent } from 'src/user/user.component';
 @Injectable({providedIn: 'root'})
 export class AuthService{
   userData: any = null; // Save logged in user data
   firebaseApp = initializeApp(environment.firebaseConfig);
-  myAuth: Auth;
+  myAuth: Auth = getAuth(this.firebaseApp);
 
-  constructor(public router: Router) {
+  constructor(public router: Router, private data: DataService) {
 
-    this.myAuth = getAuth(this.firebaseApp);
-    onAuthStateChanged(this.myAuth, (user) => {
-      if (user) {
+    onAuthStateChanged(this.myAuth, async (user) => {
+      const thisUser = await user;
+      if (thisUser) {
         this.userData = user;
+        this.data.getUser();
+        this.data.newAuthUserData = {
+          name: thisUser.displayName!,
+          email: thisUser.email!,
+          uid: thisUser.uid!,
+          photoUrl: thisUser.photoURL!,
+          phone: thisUser.phoneNumber!,
+          theme: window.localStorage.getItem('hathaway-home-theme') ?? "light"
+        };
       } else {
         this.userData = null;
       }
@@ -66,6 +76,7 @@ export class AuthService{
   // Sign out
   SignOut() {
     signOut(this.myAuth).then(() => {
+      this.data.resetUser();
       this.userData = null;
       this.router.navigate(['sign-in']);
     });

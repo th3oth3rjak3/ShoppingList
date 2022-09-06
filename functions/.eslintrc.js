@@ -11,5 +11,5 @@ module.exports = {
     "indent": ["error", 2],
     "comma-dangle": "off",
   },
-  parserOptions: { "ecmaVersion": 8 },
+  parserOptions: { "ecmaVersion": "latest" },
 };

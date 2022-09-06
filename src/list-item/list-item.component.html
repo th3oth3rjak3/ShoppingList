@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col">
+    <button
+      mat-mini-fab
+      color="{{ listItem.strikethrough ? 'warn' : 'primary' }}"
+      (click)="strikethrough()"
+      (click)="togglePurchase()"
+      class="item-fab"
+    >
+      <mat-icon>{{ listItem.strikethrough ? "close" : "check" }}</mat-icon>
+    </button>
+    <h2
+      [ngClass]="listItem.strikethrough ? 'strikethrough' : ''"
+      class="item-text"
+    >
+      {{ listItem.name }}
+    </h2>
+  </div>
+</div>

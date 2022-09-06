@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>
+  <p *ngFor="let description of data.description">{{ description }}</p>
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onConfirm()"
+    cdkFocusInitial
+  >
+    {{ data.confirmButtonText }}
+  </button>
+  <button mat-raised-button color="warn" (click)="onDeny()">
+    {{ data.denyButtonText }}
+  </button>
+</div>

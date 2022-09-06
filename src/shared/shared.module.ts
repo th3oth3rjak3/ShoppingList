@@ -4,13 +4,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 
-// Services
-import { DataService } from 'src/services/data.service';
-import { FunctionsService } from 'src/services/functions.service';
-
-// Guards
-import { AuthGuard } from 'src/app/auth.guard';
-
 // Angular Material Imports
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,13 +19,20 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatListModule } from '@angular/material/list';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialogModule } from '@angular/material/dialog';
+
+// Pipes
+import { DomSanitizerPipe } from 'src/pipes/dom-sanitizer.pipe';
 
 @NgModule({
-  declarations: [],
+  declarations: [DomSanitizerPipe],
   imports: [CommonModule],
   exports: [
     CommonModule,
     MatToolbarModule,
+    MatListModule,
     MatButtonModule,
     MatSlideToggleModule,
     MatIconModule,
@@ -49,8 +49,10 @@ import { MatGridListModule } from '@angular/material/grid-list';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    LayoutModule
+    LayoutModule,
+    MatDialogModule,
+    DomSanitizerPipe
   ],
-  providers: [DataService, AuthGuard, FunctionsService],
+  providers: [MatBottomSheet],
 })
 export class SharedModule {}

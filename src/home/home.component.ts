@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/services/auth.service';
-import { FunctionsService } from 'src/services/functions.service';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { DataService } from 'src/services/data.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.sass'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 
-  constructor(
-    private functions: FunctionsService,
-    private auth: AuthService
-  ) {}
+  constructor(private data: DataService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.data.updateLoadingStatus(true);
+  }
+
+  ngAfterViewInit(): void {
+      this.data.updateLoadingStatus(false);
+  }
+  
 }

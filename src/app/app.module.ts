@@ -7,10 +7,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './auth.guard';
 
+// Services
+import { DataService } from 'src/services/data.service';
+import { FunctionsService } from 'src/services/functions.service';
+import { AuthService } from 'src/services/auth.service';
+
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     SharedModule,
     ComponentsModule,
@@ -18,7 +21,7 @@ import { AuthGuard } from './auth.guard';
     AppRoutingModule,
     BrowserAnimationsModule,
   ],
-  providers: [AuthGuard],
+  providers: [AuthService, DataService, FunctionsService, AuthGuard],
   exports: [ComponentsModule],
   bootstrap: [AppComponent],
 })

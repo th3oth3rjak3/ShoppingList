@@ -1,0 +1,231 @@
+<!-- For Editing Existing Items -->
+<form
+  (ngSubmit)="submitItemEdits()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'edit-item'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Item to Edit</mat-label>
+      <mat-select
+        placeholder="Select an item to edit"
+        autocomplete="off"
+        class="btm-sht-input"
+        (selectionChange)="editItemSelectionChanged()"
+        [formControl]="itemToEdit"
+        ><mat-option
+          *ngFor="let option of data.items"
+          value="{{ option._id }}"
+          >{{ option.name }}</mat-option
+        ></mat-select
+      >
+      <mat-error>Item to edit is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        autocomplete="off"
+        [formControl]="editItemName"
+        placeholder="Item Name"
+      />
+      <mat-error>Name is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select
+        [formControl]="editCategory"
+        autocomplete="off"
+        placeholder="Select a category"
+        ><mat-option
+          *ngFor="let option of data.categories"
+          value="{{ option }}"
+          >{{ option }}</mat-option
+        ></mat-select
+      >
+      <mat-error>Category is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>List</mat-label>
+      <mat-select
+        [formControl]="editList"
+        autocomplete="off"
+        placeholder="Select a list"
+        ><mat-option
+          *ngFor="let option of data.lists"
+          value="{{ option._id }}"
+          >{{ option.title }}</mat-option
+        ></mat-select
+      >
+      <mat-error>List is required.</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Save Changes
+    </button>
+  </div>
+</form>
+
+<!-- For deleting existing items -->
+<form
+  (ngSubmit)="submitItemDelete()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'delete-item'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Item to Delete</mat-label>
+      <mat-select
+        placeholder="Select an item to delete"
+        autocomplete="off"
+        class="btm-sht-input"
+        [formControl]="itemToDelete"
+        ><mat-option
+          *ngFor="let option of data.items"
+          value="{{ option._id }}"
+          >{{ option.name }}</mat-option
+        ></mat-select
+      >
+      <mat-error>Item to delete is required.</mat-error></mat-form-field
+    >
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Delete Item
+    </button>
+  </div>
+</form>
+
+<!-- For adding items -->
+<form
+  (ngSubmit)="submitAddItem()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'add-item'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput autocomplete="off" [formControl]="addName" placeholder="Enter an item name" />
+      <mat-error>Name is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select [formControl]="addCategory" autocomplete="off"
+        ><mat-option
+          *ngFor="let option of data.categories"
+          value="{{ option }}"
+          >{{ option }}</mat-option
+        ></mat-select
+      >
+      <mat-error>Category is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>List</mat-label>
+      <mat-select [formControl]="addList" autocomplete="off"
+        ><mat-option
+          *ngFor="let option of data.lists"
+          value="{{ option._id }}"
+          >{{ option.title }}</mat-option
+        ></mat-select
+      >
+      <mat-error>List is required.</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Add New Item
+    </button>
+  </div>
+</form>
+
+<!-- For adding a new list -->
+<form
+  (ngSubmit)="submitAddList()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'add-list'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>List Name</mat-label>
+      <input matInput autocomplete="off" [formControl]="addListName" placeholder="Enter a list name" />
+      <mat-error>List Name is required.</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Add New List
+    </button>
+  </div>
+</form>
+
+<!-- For editing a list name -->
+<form
+  (ngSubmit)="submitListEdits()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'edit-list'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>List to Edit</mat-label>
+      <mat-select
+        placeholder="Select a list to edit"
+        autocomplete="off"
+        class="btm-sht-input"
+        (selectionChange)="editListSelectionChanged()"
+        [formControl]="listToEdit"
+        ><mat-option
+          *ngFor="let option of data.lists"
+          value="{{ option._id }}"
+          >{{ option.title }}</mat-option
+        ></mat-select
+      >
+      <mat-error>List to edit is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>List Name</mat-label>
+      <input
+        matInput
+        autocomplete="off"
+        [formControl]="editListName"
+        placeholder="List Name"
+      />
+      <mat-error>List Name is required.</mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Save Changes
+    </button>
+  </div>
+</form>
+
+<!-- For deleting a list -->
+<form
+  (ngSubmit)="submitListDelete()"
+  #theForm="ngForm"
+  *ngIf="data.type === 'delete-list'"
+>
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>List to Delete</mat-label>
+      <mat-select
+        placeholder="Select a list to delete"
+        autocomplete="off"
+        class="btm-sht-input"
+        [formControl]="listToDelete"
+        ><mat-option
+          *ngFor="let option of data.lists"
+          value="{{ option._id }}"
+          >{{ option.title }}</mat-option
+        ></mat-select
+      >
+      <mat-error>List to delete is required.</mat-error></mat-form-field
+    >
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" class="btm-sht-btn">
+      Delete List
+    </button>
+  </div>
+</form>

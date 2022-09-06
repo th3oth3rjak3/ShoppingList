@@ -3,13 +3,18 @@ import { SharedModule } from 'src/shared/shared.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
-
+import { BottomSheetComponent } from './bottom-sheet/bottom-sheet.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
-  declarations: [DashboardComponent, NavbarComponent, FooterComponent],
-  imports: [
-    SharedModule
+  declarations: [
+    DashboardComponent,
+    NavbarComponent,
+    FooterComponent,
+    BottomSheetComponent,
+    ConfirmationDialogComponent,
   ],
-  exports: [ DashboardComponent, NavbarComponent, FooterComponent]
+  imports: [SharedModule],
+  exports: [DashboardComponent, NavbarComponent, FooterComponent],
 })
-export class ComponentsModule { }
+export class ComponentsModule {}

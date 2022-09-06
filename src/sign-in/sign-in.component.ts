@@ -1,9 +1,13 @@
-import { AfterContentChecked, AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, Router } from '@angular/router';
+import {
+  AfterContentChecked,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
-import { FunctionsService } from 'src/services/functions.service';
 import { User } from 'src/user/user.model';
 
 @Component({
@@ -14,39 +18,40 @@ import { User } from 'src/user/user.model';
 export class SignInComponent implements OnInit, AfterContentChecked, OnDestroy {
   appName: string = DataService.appName;
   returnUrl: string = 'home';
-  sub: Subscription = new Subscription;
+  sub: Subscription = new Subscription();
   userData: User = DataService.newUser;
 
   constructor(
     public authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private functions: FunctionsService,
-    private data: DataService,
+    private data: DataService
   ) {}
 
   ngOnInit(): void {
+    this.data.updateLoadingStatus(true);
     const url = this.route.snapshot.queryParams['returnUrl'];
-    if (url?.length){
+    if (url?.length) {
       this.returnUrl = url;
     }
 
-    this.sub = this.data.userData.subscribe((user: User) => this.userData = user);
+    this.sub = this.data.userData.subscribe(
+      (user: User) => (this.userData = user)
+    );
   }
 
   ngAfterContentChecked(): void {
-      if (this.authService.isLoggedIn) {
-        this.router.navigateByUrl(this.returnUrl);
-      }
+    if (this.authService.isLoggedIn) {
+      this.router.navigateByUrl(this.returnUrl);
+    }
   }
 
   ngOnDestroy(): void {
-      this.sub.unsubscribe();
+    this.sub.unsubscribe();
   }
 
   googleAuth() {
     this.authService.GoogleAuth(this.returnUrl).then(() => {
-      this.data.getUser();
       this.router.navigateByUrl(this.returnUrl);
     });
   }

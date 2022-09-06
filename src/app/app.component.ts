@@ -11,7 +11,9 @@ import { User } from 'src/user/user.model';
   styleUrls: ['./app.component.sass'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  sub: Subscription = new Subscription();
+  isLoading: boolean = false;
+  userSub: Subscription = new Subscription();
+  loadingSub: Subscription = new Subscription();
   userData: User = DataService.newUser;
   destroyed = new Subject<void>();
   showWelcome: boolean = true;
@@ -26,8 +28,9 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public authService: AuthService,
     breakpointObserver: BreakpointObserver,
-    private data: DataService
+    private data: DataService,
   ) {
+
     breakpointObserver
       .observe([
         Breakpoints.XSmall,
@@ -47,19 +50,22 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   get displayName(): string {
-    const name = this.authService.userData?.displayName;
-    return name ? name : '';
+    const name = this.userData?.name;
+    return name ?? this.authService.user.displayName;
   }
 
   ngOnInit(): void {
-    this.sub = this.data.userData.subscribe(
-      (user: User) => (this.userData = user)
+    this.userSub = this.data.userData.subscribe((user: User) => {
+      this.userData = user;
+    });
+    this.loadingSub = this.data.isLoading.subscribe(
+      (result: boolean) => (this.isLoading = result)
     );
-    this.data.getUser();
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.userSub.unsubscribe();
+    this.loadingSub.unsubscribe();
     this.destroyed.next();
     this.destroyed.complete();
   }

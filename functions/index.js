@@ -1,5 +1,4 @@
 /* jshint esversion: 6 */
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccount.json");
@@ -23,12 +22,23 @@ exports.helloWorld = functions.https.onCall((data, context) => {
 exports.getIndividualShoppingListItems = functions.https.onCall(
   async (data, context) => {
     const userId = context.auth.uid;
+    const filter = data.filter;
     if (userId) {
       const docList = [];
-      const result = await db
-        .collection("IndividualShoppingListItems")
-        .where("uid", "==", userId)
-        .get();
+      let result;
+      if (filter) {
+        result = await db
+          .collection("IndividualShoppingListItems")
+          .where("uid", "==", userId)
+          .where("list", "==", filter)
+          .get();
+      } else {
+        result = await db
+          .collection("IndividualShoppingListItems")
+          .where("uid", "==", userId)
+          .get();
+      }
+
       result.forEach((doc) => {
         const fullDoc = doc.data();
         fullDoc._id = doc.id;
@@ -49,11 +59,14 @@ exports.addIndividualShoppingListItem = functions.https.onCall(
   }
 );
 
-exports.deleteIndividualShoppingListItem = functions.https.onCall(
+exports.deleteIndividualShoppingListItems = functions.https.onCall(
   async (data, context) => {
     const userId = context.auth.uid;
     if (userId) {
-      await db.collection("IndividualShoppingListItems").doc(data).delete();
+      data.forEach(
+        async (item) =>
+          await db.collection("IndividualShoppingListItems").doc(item).delete()
+      );
     }
   }
 );
@@ -62,10 +75,15 @@ exports.editIndividualShoppingListItem = functions.https.onCall(
   async (data, context) => {
     const userId = context.auth.uid;
     if (userId) {
+      const documentData = {
+        category: data.category,
+        name: data.name,
+        list: data.list,
+      };
       await db
         .collection("IndividualShoppingListItems")
-        .doc(data.id)
-        .update(data.document);
+        .doc(data._id)
+        .update(documentData);
     }
   }
 );
@@ -79,14 +97,10 @@ exports.addUser = functions.https.onCall(async (data, context) => {
 });
 
 exports.getUser = functions.https.onCall(async (data, context) => {
-  const userId = context.auth.uid;
+  const userId = context.auth?.uid;
   if (userId) {
-    console.log(data);
-    const result = await db
-      .collection("Users")
-      .doc(userId)
-      .get();
-    return result.data();
+    const result = await db.collection("Users").doc(userId).get();
+    return result.data() ?? "no data";
   }
 });
 
@@ -94,5 +108,84 @@ exports.editUser = functions.https.onCall(async (data, context) => {
   const userId = context.auth.uid;
   if (userId) {
     await db.collection("Users").doc(userId).update(data);
+  }
+});
+
+exports.getIndividualLists = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  const filter = data.filter;
+  if (userId) {
+    let docs = [];
+    let results;
+    console.log(data?.filter);
+    if (filter) {
+      results = await db
+        .collection("IndividualLists")
+        .where("uid", "==", userId)
+        .where("_id", "==", filter)
+        .get();
+      results.forEach((doc) => {
+        const fullDoc = doc.data();
+        fullDoc._id = doc.id;
+        docs.push(fullDoc);
+      });
+    } else {
+      results = await db
+        .collection("IndividualLists")
+        .where("uid", "==", userId)
+        .get();
+      results.forEach((doc) => {
+        const fullDoc = doc.data();
+        fullDoc._id = doc.id;
+        docs.push(fullDoc);
+      });
+    }
+
+    docs = docs.sort((a, b) =>
+      a.title < b.title ? -1 : a.title > b.title ? 1 : 0
+    );
+    return docs;
+  }
+});
+
+exports.addIndividualList = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    const newList = db.collection("IndividualLists").doc();
+    data.uid = userId;
+    data._id = newList.id;
+    await newList.set(data);
+  }
+});
+
+exports.deleteIndividualList = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    // console.log(data);
+    await db.collection("IndividualLists").doc(data._id).delete();
+  }
+});
+
+exports.updateIndividualList = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    await db.collection("IndividualLists").doc(data._id).update(data);
+  }
+});
+
+exports.addCategories = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    data._id = userId;
+    await db.collection("Categories").doc(userId).set(data);
+  }
+});
+
+exports.getCategories = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  if (userId) {
+    const result = await db.collection("Categories").doc(userId).get();
+    console.log(result.data());
+    return result.data() ?? null;
   }
 });
