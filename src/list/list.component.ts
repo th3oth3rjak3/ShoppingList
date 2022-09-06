@@ -1,19 +1,13 @@
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from 'src/services/data.service';
 import { List } from './list.model';
 import { Item } from 'src/items/item.model';
 import { ListItem } from './list-item.model';
 import { BottomSheetComponent } from 'src/components/bottom-sheet/bottom-sheet.component';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   MatBottomSheet,
-  MatBottomSheetRef,
   MatBottomSheetConfig,
 } from '@angular/material/bottom-sheet';
 import { EditItemBottomSheetData } from 'src/components/bottom-sheet/edit-bs-item-data.model';
@@ -27,7 +21,7 @@ import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.sass'],
 })
-export class ListComponent implements OnInit, AfterViewInit {
+export class ListComponent implements OnInit {
   list: List | null = null;
   items: Item[] = [];
   listItems: ListItem[] = [];
@@ -49,7 +43,9 @@ export class ListComponent implements OnInit, AfterViewInit {
       this.list = <List>list.data[0];
     });
     this.data.getCategories().then((categories: any) => {
-      this.categories = categories.data.categories;
+      if (categories.length) {
+        this.categories = categories.data.categories;
+      }
     });
     this.data.getIndividualLists().then((lists: any) => {
       this.lists = <List[]>lists.data;
@@ -57,8 +53,6 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     this.getItems();
   }
-
-  ngAfterViewInit(): void {}
 
   filteredItems(category: string): ListItem[] {
     let filteredListItems = this.listItems.filter(
@@ -129,13 +123,13 @@ export class ListComponent implements OnInit, AfterViewInit {
   openFinishedDialog(): void {
     const dialogConfig = new MatDialogConfig();
     const dialogData: ConfirmationDialogData = {
-      title: "Finished Shopping?",
+      title: 'Finished Shopping?',
       description: [
         'Are you sure you want to finish shopping?',
         'WARNING: This will delete all checked items!',
       ],
-      confirmButtonText: "Finished",
-      denyButtonText: "Cancel"
+      confirmButtonText: 'Finished',
+      denyButtonText: 'Cancel',
     };
     dialogConfig.data = dialogData;
     dialogConfig.autoFocus = true;

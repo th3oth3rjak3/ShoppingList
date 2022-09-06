@@ -12,11 +12,11 @@ export class CategoriesComponent implements OnInit {
   constructor(private data: DataService) {}
 
   ngOnInit(): void {
-    this.data
-      .getCategories()
-      .then((categories: any) => {
+    this.data.getCategories().then((categories: any) => {
+      if (categories.length) {
         console.log(JSON.stringify(categories.data.categories));
         this.categories = categories.data.categories;
-      });
+      }
+    });
   }
 }
