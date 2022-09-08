@@ -5,7 +5,10 @@ import {
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { ConfirmationDialogData } from 'src/components/confirmation-dialog/confirmation-dialog-model';
+import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/confirmation-dialog.component';
 import { List } from 'src/list/list.model';
 import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
@@ -49,7 +52,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   categories: string[] = [];
   lists: List[] = [];
 
-  constructor(private auth: AuthService, private data: DataService) {}
+  constructor(private auth: AuthService, private data: DataService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.data.updateLoadingStatus(true);
@@ -100,7 +103,6 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   getIndividualShoppingListItems(filter: string | null = null): void {
     this.data.getIndividualItems(filter).then((result: any) => {
       this.IndividualItems = result.data;
-      console.log(JSON.stringify(this.IndividualItems));
     });
   }
 
@@ -146,12 +148,26 @@ export class ItemsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteIndividualItem(item: any): void {
-    // TODO: Change this to the modal confirmation dialog
-    if (confirm('Are you sure you wish to delete ' + item.name + '?')) {
-      this.data
+  deleteIndividualItem(item: Item): void {
+    const data: ConfirmationDialogData = {
+      title: "Delete Item?",
+      description: [`Are you sure you wish to delete '${item.name}'?`],
+      confirmButtonText: "Delete",
+      denyButtonText: "Cancel"
+    };
+    const config: MatDialogConfig = {
+      data: data,
+      autoFocus: true
+    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, config);
+    const sub = dialogRef.afterClosed().subscribe((confirm: boolean) => {
+      if (confirm){
+        this.IndividualItems = this.IndividualItems.filter((thisItem: Item) => thisItem._id !== item._id);
+        this.data
         .deleteIndividualShoppingListItems([item._id])
         .then(() => this.getIndividualShoppingListItems(''));
-    }
+      }
+      sub.unsubscribe();
+    });
   }
 }
