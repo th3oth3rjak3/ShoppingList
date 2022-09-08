@@ -119,7 +119,6 @@ exports.getIndividualLists = functions.https.onCall(async (data, context) => {
   if (userId) {
     let docs = [];
     let results;
-    console.log(data?.filter);
     if (filter) {
       results = await db
         .collection("IndividualLists")
@@ -163,7 +162,6 @@ exports.addIndividualList = functions.https.onCall(async (data, context) => {
 exports.deleteIndividualList = functions.https.onCall(async (data, context) => {
   const userId = context.auth.uid;
   if (userId) {
-    // console.log(data);
     await db.collection("IndividualLists").doc(data._id).delete();
   }
 });
@@ -187,7 +185,6 @@ exports.getCategories = functions.https.onCall(async (data, context) => {
   const userId = context.auth.uid;
   if (userId) {
     const result = await db.collection("Categories").doc(userId).get();
-    console.log(result.data());
     return result.data() ?? null;
   }
 });
