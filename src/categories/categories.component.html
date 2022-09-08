@@ -3,7 +3,9 @@
     <h1 class="header">Categories</h1>
   </div>
   <form
-    (ngSubmit)="!editing ? addCategory(addCategoryForm) : editCategory(addCategoryForm)"
+    (ngSubmit)="
+      !editing ? addCategory(addCategoryForm) : editCategory(addCategoryForm)
+    "
     [formGroup]="addCategoryFormGroup"
     autocomplete="off"
     #addCategoryForm="ngForm"
@@ -30,6 +32,11 @@
     <div class="row">
       <button
         mat-raised-button
+        matTooltip="{{
+          editing ? 'Save changes to the category.' : 'Add new category.'
+        }}"
+        matTooltipShowDelay="1000"
+        matTooltipPosition="left"
         type="submit"
         [disabled]="!addCategoryFormGroup.valid"
         color="primary"
@@ -38,6 +45,9 @@
         {{ editing ? "Save Changes" : "Add Category" }}</button
       ><button
         mat-raised-button
+        matTooltip="Reset the form."
+        matTooltipShowDelay="1000"
+        matTooltipPosition="right"
         color="warn"
         type="button"
         (click)="resetForm(addCategoryForm)"
@@ -47,6 +57,9 @@
       </button>
       <button
         mat-raised-button
+        matTooltip="Cancel editing."
+        matTooltipShowDelay="1000"
+        matTooltipPosition="right"
         color="warn"
         type="button"
         (click)="cancelEditing(addCategoryForm)"
@@ -78,7 +91,13 @@
           *matCellDef="let category"
           (click)="beginEditingCategory(category)"
         >
-          <mat-icon class="icon">edit</mat-icon>
+          <mat-icon
+            matTooltip="Edit {{ category }}."
+            matTooltipShowDelay="1000"
+            matTooltipPosition="left"
+            class="icon"
+            >edit</mat-icon
+          >
         </td>
       </ng-container>
       <ng-container matColumnDef="delete">
@@ -88,7 +107,13 @@
           *matCellDef="let category"
           (click)="confirmDelete(category)"
         >
-          <mat-icon class="icon">delete</mat-icon>
+          <mat-icon
+            matTooltip="Delete {{ category }}."
+            matTooltipShowDelay="1000"
+            matTooltipPosition="left"
+            class="icon"
+            >delete</mat-icon
+          >
         </td>
       </ng-container>
     </table>
