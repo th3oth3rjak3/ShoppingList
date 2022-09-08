@@ -1,0 +1,67 @@
+.col
+    justify-content: center
+
+.container
+    padding-right: 0
+    padding-left: 0
+
+
+table
+    margin-top: 20px
+    text-align: center
+    padding-right: 0
+
+.mat-row
+    $easeTime: 0.2s
+    &:hover
+        cursor: pointer
+        -webkit-filter: brightness(130%)
+        -webkit-transition: all $easeTime ease
+        -moz-transition: all $easeTime ease
+        -o-transition: all $easeTime ease
+        -ms-transition: all $easeTime ease
+        transition: all $easeTime ease
+
+    &.selected
+        -webkit-filter: brightness(130%)
+        -webkit-transition: all $easeTime ease
+        -moz-transition: all $easeTime ease
+        -o-transition: all $easeTime ease
+        -ms-transition: all $easeTime ease
+        transition: all $easeTime ease
+
+.mat-form-field
+    display: inline
+
+button
+    width: 150px
+    margin: 0 10px
+
+    &:hover
+        transform: scale(1.05)
+
+    &:active
+        transform: scale(0.95)
+
+.form-inputs
+    margin-bottom: 10px
+
+.icon
+    &:hover
+        cursor: pointer
+
+th.mat-header-cell
+    padding: 0 5px !important
+
+td.mat-cell
+    padding: 0 5px !important
+    word-wrap: break-word !important
+    
+.mat-column-category
+    text-align: center
+
+.mat-column-edit
+    text-align: center
+
+.mat-column-delete
+    text-align: center

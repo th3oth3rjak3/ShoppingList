@@ -2,9 +2,93 @@
   <div class="row">
     <h1 class="header">Categories</h1>
   </div>
-  <div class="row">
-    <div class="col">
-      <div *ngFor="let category of categories">{{ category }}</div>
+  <form
+    (ngSubmit)="!editing ? addCategory(addCategoryForm) : editCategory(addCategoryForm)"
+    [formGroup]="addCategoryFormGroup"
+    autocomplete="off"
+    #addCategoryForm="ngForm"
+  >
+    <div class="row form-inputs">
+      <div class="col col-md-3">
+        <mat-form-field appearance="outline">
+          <mat-label>Category Name</mat-label>
+          <input
+            matInput
+            placeholder="Enter Category Name"
+            [formControl]="addCategoryName"
+            required
+            (change)="categoryExists()"
+          /><mat-error *ngIf="!addCategoryName.value?.length">{{
+            "Category Name is required"
+          }}</mat-error>
+          <mat-error *ngIf="addCategoryName.hasError('notUnique')">{{
+            "Category already exists, choose another name."
+          }}</mat-error></mat-form-field
+        >
+      </div>
     </div>
+    <div class="row">
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!addCategoryFormGroup.valid"
+        color="primary"
+        autocomplete="off"
+      >
+        {{ editing ? "Save Changes" : "Add Category" }}</button
+      ><button
+        mat-raised-button
+        type="button"
+        (click)="resetForm(addCategoryForm)"
+        *ngIf="!editing"
+      >
+        Reset
+      </button>
+      <button
+        mat-raised-button
+        type="button"
+        (click)="cancelEditing(addCategoryForm)"
+        *ngIf="editing"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+  <div class="row">
+    <table mat-table [dataSource]="categories" class="mat-elevation-z8">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [ngClass]="{
+          selected: selectedRow ? selectedRow === row : false
+        }"
+        (click)="updateSelectedRow(row)"
+      ></tr>
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Category Name</th>
+        <td mat-cell *matCellDef="let category">{{ category }}</td>
+      </ng-container>
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef>Edit</th>
+        <td
+          mat-cell
+          *matCellDef="let category"
+          (click)="beginEditingCategory(category)"
+        >
+          <mat-icon class="icon">edit</mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <td
+          mat-cell
+          *matCellDef="let category"
+          (click)="confirmDelete(category)"
+        >
+          <mat-icon class="icon">delete</mat-icon>
+        </td>
+      </ng-container>
+    </table>
   </div>
 </div>

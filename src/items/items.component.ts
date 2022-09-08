@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { List } from 'src/list/list.model';
 import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
 import { Item } from './item.model';
@@ -45,10 +46,8 @@ export class ItemsComponent implements OnInit, AfterViewInit {
 
   // Subscriptions
   itemsSub: Subscription = new Subscription();
-
-  // TODO: get categories from database
-  categories: string[] = ['Groceries', 'Automotive', 'Beauty'];
-  lists: any[] = ['fake list', 'another fake list'];
+  categories: string[] = [];
+  lists: List[] = [];
 
   constructor(private auth: AuthService, private data: DataService) {}
 
@@ -58,6 +57,11 @@ export class ItemsComponent implements OnInit, AfterViewInit {
     this.data.getIndividualLists().then((lists) => {
       this.lists = <any[]>lists.data;
     });
+    this.data
+      .getCategories()
+      .then(
+        (categories: any) => (this.categories = categories.data.categories)
+      );
   }
 
   ngAfterContentInit(): void {}
@@ -94,13 +98,9 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   }
 
   getIndividualShoppingListItems(filter: string | null = null): void {
-    if (this.auth.isLoggedIn) {
-      this.data.getIndividualItems(filter).then((result: any) => {
-        this.IndividualItems = result.data;
-      });
-    } else {
-      console.error('You must be logged in to use this feature.');
-    }
+    this.data.getIndividualItems(filter).then((result: any) => {
+      this.IndividualItems = result.data;
+    });
   }
 
   updateSelectedRow(row: any) {
@@ -128,7 +128,6 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   }
 
   editIndividualItem(formDirective: FormGroupDirective): void {
-    // TODO: update this.
     this.editing = false;
     const data: Item = {
       _id: this.editingItemId,
@@ -147,6 +146,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   }
 
   deleteIndividualItem(item: any): void {
+    // TODO: Change this to the modal confirmation dialog
     if (confirm('Are you sure you wish to delete ' + item.name + '?')) {
       this.data
         .deleteIndividualShoppingListItems([item._id])
