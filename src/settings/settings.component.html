@@ -1,11 +1,25 @@
 <div class="container">
   <div class="row">
-    <h1 class="header">{{appName}} Settings</h1>
+    <h1 class="header">{{ appName }} Settings</h1>
   </div>
   <div class="row">
-    <mat-card class="settings-card" routerLink="/settings/user">User</mat-card>
+    <mat-card
+      matTooltip="Click here to manage your user settings."
+      matTooltipShowDelay="1000"
+      matTooltipPosition="left"
+      class="settings-card"
+      routerLink="/settings/user"
+      >User</mat-card
+    >
   </div>
   <div class="row">
-    <mat-card class="settings-card" routerLink="/settings/categories">Categories</mat-card>
+    <mat-card
+      matTooltip="Click here to manage your categories."
+      matTooltipShowDelay="1000"
+      matTooltipPosition="left"
+      class="settings-card"
+      routerLink="/settings/categories"
+      >Categories</mat-card
+    >
   </div>
 </div>
