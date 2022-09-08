@@ -100,6 +100,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   getIndividualShoppingListItems(filter: string | null = null): void {
     this.data.getIndividualItems(filter).then((result: any) => {
       this.IndividualItems = result.data;
+      console.log(JSON.stringify(this.IndividualItems));
     });
   }
 

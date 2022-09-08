@@ -43,7 +43,7 @@ export class ListComponent implements OnInit {
       this.list = <List>list.data[0];
     });
     this.data.getCategories().then((categories: any) => {
-      if (categories.length) {
+      if (categories.data.categories.length) {
         this.categories = categories.data.categories;
       }
     });

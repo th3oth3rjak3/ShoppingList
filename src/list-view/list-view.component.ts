@@ -11,6 +11,7 @@ import { AddListBottomSheetData } from 'src/components/bottom-sheet/add-bs-list-
 import { BottomSheetComponent } from 'src/components/bottom-sheet/bottom-sheet.component';
 import { EditListBottomSheetData } from 'src/components/bottom-sheet/edit-bs-list-data.model';
 import { DeleteListBottomSheetData } from 'src/components/bottom-sheet/delete-bs-list-data.model';
+import { Item } from 'src/items/item.model';
 
 @Component({
   selector: 'app-list-view',
@@ -102,10 +103,22 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     let sheet = this._bottomSheet.open(BottomSheetComponent, config);
     const sub = sheet.afterDismissed().subscribe((id: string) => {
       if (id) {
-        this.data.deleteIndividualList(id).then(() => {
-          this.getIndividualLists();
-          sub.unsubscribe();
+        this.lists = this.lists.filter((list: List) => list._id !== id);
+        this.data.getIndividualItems(id).then((items) => {
+          const theseItems = items.data.filter((item: Item) => item.list === id);
+          let itemIdsToDelete: string[] = [];
+          theseItems.forEach((item: Item) => {
+            if (item.list === id){
+              itemIdsToDelete.push(item._id);
+            }
+          });
+          if (itemIdsToDelete.length){
+            this.data.deleteIndividualShoppingListItems(itemIdsToDelete);
+          }
+        }).then(() => {
+          this.deleteIndividualList(id);
         });
+        sub.unsubscribe();
       }
     });
   }

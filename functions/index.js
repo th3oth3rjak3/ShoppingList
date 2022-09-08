@@ -54,7 +54,9 @@ exports.addIndividualShoppingListItem = functions.https.onCall(
     const userId = context.auth.uid;
     if (userId) {
       data.uid = userId;
-      await db.collection("IndividualShoppingListItems").add(data);
+      const newDoc = db.collection("IndividualShoppingListItems").doc();
+      data._id = newDoc.id;
+      await newDoc.set(data);
     }
   }
 );
