@@ -52,7 +52,6 @@ export class DataService {
   }
 
   saveUser(userData: User): void {
-    console.log(userData);
     this.functions.editUser(userData);
   }
 
