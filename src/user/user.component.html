@@ -3,11 +3,16 @@
     <h1 class="header">User Settings</h1>
   </div>
   <div class="row user-heading">
-    <img
-      referrerpolicy="no-referrer"
-      src="{{ userData.photoUrl }}"
+    <a
+      matTooltip="Click here to open Google Accounts in another tab."
+      matTooltipShowDelay="1000"
+      matTooltipPosition="left"
+      href="https://accounts.google.com"
       class="user-photo"
-    />
+      target="_blank"
+    >
+      <img referrerpolicy="no-referrer" src="{{ userData.photoUrl }}" />
+    </a>
     <h2 class="username">{{ userData.name }}</h2>
   </div>
   <div class="row edit-fields">
