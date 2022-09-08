@@ -55,10 +55,22 @@
       </div>
     </div>
     <div class="row">
-      <button mat-raised-button type="submit" [disabled]="!itemFormGroup.valid">
+      <button
+        mat-raised-button
+        matTooltip="Click here to {{
+          editing ? 'save changes to an item' : 'add an item'
+        }}"
+        matTooltipShowDelay="1000"
+        matTooltipPosition="left"
+        type="submit"
+        [disabled]="!itemFormGroup.valid"
+      >
         {{ editing ? "Save" : "Add Item" }}</button
       ><button
         mat-raised-button
+        matTooltip="Click here to reset the form"
+        matTooltipShowDelay="1000"
+        matTooltipPosition="right"
         type="button"
         (click)="resetForm(formDirective)"
         *ngIf="!editing"
@@ -67,6 +79,10 @@
       </button>
       <button
         mat-raised-button
+        mat-raised-button
+        matTooltip="Click here to cancel editing"
+        matTooltipShowDelay="1000"
+        matTooltipPosition="right"
         type="button"
         (click)="cancelEditing(formDirective)"
         *ngIf="editing"
@@ -98,6 +114,10 @@
         <th mat-header-cell *matHeaderCellDef>List</th>
         <td mat-cell *matCellDef="let item">
           <button
+            class="list-router-button"
+            matTooltip="Click here to go to {{ listName(item.list) }}"
+            matTooltipShowDelay="1000"
+            matTooltipPosition="left"
             mat-button
             routerLink="../lists/{{ item.list }}"
           >
@@ -112,7 +132,13 @@
           *matCellDef="let item"
           (click)="beginEditingIndividualItem(item)"
         >
-          <mat-icon class="icon">edit</mat-icon>
+          <mat-icon
+            class="icon"
+            matTooltip="Click here to edit {{ item.name }}"
+            matTooltipShowDelay="1000"
+            matTooltipPosition="left"
+            >edit</mat-icon
+          >
         </td>
       </ng-container>
       <ng-container matColumnDef="delete">
@@ -122,7 +148,13 @@
           *matCellDef="let item"
           (click)="deleteIndividualItem(item)"
         >
-          <mat-icon class="icon">delete</mat-icon>
+          <mat-icon
+            matTooltip="Click here to delete {{ item.name }}"
+            matTooltipShowDelay="1000"
+            matTooltipPosition="right"
+            class="icon"
+            >delete</mat-icon
+          >
         </td>
       </ng-container>
     </table>
