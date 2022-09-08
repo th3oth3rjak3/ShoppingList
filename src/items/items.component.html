@@ -57,6 +57,7 @@
     <div class="row">
       <button
         mat-raised-button
+        color="primary"
         matTooltip="Click here to {{
           editing ? 'save changes to an item' : 'add an item'
         }}"
@@ -68,6 +69,7 @@
         {{ editing ? "Save" : "Add Item" }}</button
       ><button
         mat-raised-button
+        color="warn"
         matTooltip="Click here to reset the form"
         matTooltipShowDelay="1000"
         matTooltipPosition="right"
@@ -79,7 +81,7 @@
       </button>
       <button
         mat-raised-button
-        mat-raised-button
+        color="warn"
         matTooltip="Click here to cancel editing"
         matTooltipShowDelay="1000"
         matTooltipPosition="right"
