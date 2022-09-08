@@ -3,13 +3,21 @@
     <h1 class="header">My Lists</h1>
   </div>
   <div class="row" *ngFor="let list of lists; let i = index">
-    <mat-card class="lists-card" (click)="navigate(list._id)">{{
-      list.title
-    }}</mat-card>
+    <mat-card
+      matTooltip="Click here to view '{{ list.title }}'."
+      matTooltipPosition="left"
+      matTooltipShowDelay="1000"
+      class="lists-card"
+      (click)="navigate(list._id)"
+      >{{ list.title }}</mat-card
+    >
   </div>
 </div>
 <div class="list-fab">
   <button
+    matTooltip="Click here to add a new list."
+    matTooltipPosition="left"
+    matTooltipShowDelay="1000"
     mat-fab
     class="list-fab-button"
     color="green"
@@ -18,6 +26,9 @@
     <mat-icon>add</mat-icon>
   </button>
   <button
+  matTooltip="Click here to edit the name of a list."
+  matTooltipPosition="left"
+  matTooltipShowDelay="1000"
     mat-fab
     class="list-fab-button"
     color="gray"
@@ -26,6 +37,9 @@
     <mat-icon>edit</mat-icon>
   </button>
   <button
+    matTooltip="Click here to delete a list."
+    matTooltipPosition="left"
+    matTooltipShowDelay="1000"
     mat-fab
     class="list-fab-button"
     color="warn"
