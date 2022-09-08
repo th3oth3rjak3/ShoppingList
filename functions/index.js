@@ -11,14 +11,6 @@ admin.initializeApp({
 const db = admin.firestore();
 db.settings({ ignoreUndefinedProperties: true });
 
-exports.helloWorld = functions.https.onCall((data, context) => {
-  const uid = context.auth.uid;
-  if (uid) {
-    const message = "Hello " + data + "!";
-    return message;
-  }
-});
-
 exports.getIndividualShoppingListItems = functions.https.onCall(
   async (data, context) => {
     const userId = context.auth.uid;

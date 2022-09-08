@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFunctions, httpsCallable, HttpsCallableResult, connectFunctionsEmulator, Functions } from 'firebase/functions';
+import { getFunctions, httpsCallable, HttpsCallableResult } from 'firebase/functions';
 import { environment } from 'src/environments/environment';
-import { User } from 'src/user/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +12,8 @@ export class FunctionsService {
   functions = getFunctions(this.app);
   
 
-  constructor() {
-    connectFunctionsEmulator(this.functions, "localhost", 5001);
-  }
+  constructor() {}
 
-  getHello(data: any) : Promise<HttpsCallableResult> {
-    const helloWorld = httpsCallable(this.functions, 'helloWorld');
-    return helloWorld(data);
-  }
 
   getIndividualShoppingListItems(filter: string | null = null) : Promise<HttpsCallableResult> {
     const getShoppingListItems = httpsCallable(this.functions, 'getIndividualShoppingListItems');
