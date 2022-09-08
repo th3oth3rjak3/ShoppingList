@@ -5,7 +5,11 @@ import {
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogData } from 'src/components/confirmation-dialog/confirmation-dialog-model';
 import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/confirmation-dialog.component';
@@ -36,7 +40,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   IndividualItems: Item[] = [];
   selectedRow: any = null;
   editing: boolean = false;
-  editingItemId: string = '';
+  editingItem: Item = { _id: '', uid: '', name: '', category: '', list: '' };
 
   // Column ID's for the table
   displayedColumns: string[] = [
@@ -52,7 +56,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   categories: string[] = [];
   lists: List[] = [];
 
-  constructor(private auth: AuthService, private data: DataService, private dialog: MatDialog) {}
+  constructor(private data: DataService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.data.updateLoadingStatus(true);
@@ -119,53 +123,55 @@ export class ItemsComponent implements OnInit, AfterViewInit {
     this.itemNameControl.setValue(item.name);
     this.categoryControl.setValue(item.category);
     this.listControl.setValue(item.list);
-    this.editingItemId = item._id;
-    this.getIndividualShoppingListItems(item._id);
+    this.editingItem = item;
+    this.IndividualItems = this.IndividualItems.filter(
+      (thisItem: Item) => thisItem._id !== item._id
+    );
   }
 
   cancelEditing(formDirective: FormGroupDirective): void {
     this.editing = false;
-    this.editingItemId = '';
+    this.editingItem._id = '';
     this.getIndividualShoppingListItems();
     this.resetForm(formDirective);
   }
 
   editIndividualItem(formDirective: FormGroupDirective): void {
-    this.editing = false;
     const data: Item = {
-      _id: this.editingItemId,
-      uid: this.IndividualItems.filter(
-        (item: Item) => item._id === this.editingItemId
-      )[0].uid,
+      _id: this.editingItem._id,
+      uid: this.editingItem.uid,
       name: this.itemNameControl.value,
       category: this.categoryControl.value,
       list: this.listControl.value,
     };
     this.data.editIndividualShoppingListItem(data).then(() => {
-      this.editingItemId = '';
+      this.editingItem._id = '';
       this.resetForm(formDirective);
       this.getIndividualShoppingListItems('');
+      this.editing = false;
     });
   }
 
   deleteIndividualItem(item: Item): void {
     const data: ConfirmationDialogData = {
-      title: "Delete Item?",
+      title: 'Delete Item?',
       description: [`Are you sure you wish to delete '${item.name}'?`],
-      confirmButtonText: "Delete",
-      denyButtonText: "Cancel"
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
     };
     const config: MatDialogConfig = {
       data: data,
-      autoFocus: true
-    }
+      autoFocus: true,
+    };
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, config);
     const sub = dialogRef.afterClosed().subscribe((confirm: boolean) => {
-      if (confirm){
-        this.IndividualItems = this.IndividualItems.filter((thisItem: Item) => thisItem._id !== item._id);
+      if (confirm) {
+        this.IndividualItems = this.IndividualItems.filter(
+          (thisItem: Item) => thisItem._id !== item._id
+        );
         this.data
-        .deleteIndividualShoppingListItems([item._id])
-        .then(() => this.getIndividualShoppingListItems(''));
+          .deleteIndividualShoppingListItems([item._id])
+          .then(() => this.getIndividualShoppingListItems(''));
       }
       sub.unsubscribe();
     });
