@@ -1,5 +1,5 @@
 <mat-toolbar color="primary" class="toolbar">
-  <div class="sage">
+  <div class="brand-div">
     <button
       mat-raised-button
       class="brand"
@@ -8,7 +8,16 @@
       matTooltip="Click here to navigate back to the main page"
       matTooltipPosition="below"
       matTooltipShowDelay="1000"
-    ></button><p class="jake">{{ appName }}</p>
+    ></button>
+    <p
+      class="app-title"
+      routerLink="/home"
+      matTooltip="Click here to navigate back to the main page"
+      matTooltipPosition="below"
+      matTooltipShowDelay="1000"
+    >
+      {{ appName }}
+    </p>
   </div>
   <div class="icons">
     <mat-icon
