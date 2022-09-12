@@ -2,6 +2,11 @@
   <div class="row">
     <h1 class="header">My Lists</h1>
   </div>
+  <div class="row">
+    <h3 *ngIf="!lists.length">
+      It looks like you haven't added any lists yet.
+    </h3>
+  </div>
   <div class="row" *ngFor="let list of lists; let i = index">
     <mat-card
       matTooltip="Click here to view '{{ list.title }}'."
@@ -26,9 +31,9 @@
     <mat-icon>add</mat-icon>
   </button>
   <button
-  matTooltip="Click here to edit the name of a list."
-  matTooltipPosition="left"
-  matTooltipShowDelay="1000"
+    matTooltip="Click here to edit the name of a list."
+    matTooltipPosition="left"
+    matTooltipShowDelay="1000"
     mat-fab
     class="list-fab-button"
     color="gray"

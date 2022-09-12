@@ -1,20 +1,23 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
-import {
-  MatDialog,
-  MatDialogConfig,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogData } from 'src/components/confirmation-dialog/confirmation-dialog-model';
 import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/confirmation-dialog.component';
 import { List } from 'src/list/list.model';
-import { AuthService } from 'src/services/auth.service';
 import { DataService } from 'src/services/data.service';
 import { Item } from './item.model';
 
@@ -23,7 +26,7 @@ import { Item } from './item.model';
   templateUrl: './items.component.html',
   styleUrls: ['./items.component.sass'],
 })
-export class ItemsComponent implements OnInit, AfterViewInit {
+export class ItemsComponent implements OnInit, OnDestroy {
   // Form Fields
   itemNameControl: FormControl = new FormControl(null, [Validators.required]);
   categoryControl: FormControl = new FormControl(null, [Validators.required]);
@@ -56,25 +59,26 @@ export class ItemsComponent implements OnInit, AfterViewInit {
   categories: string[] = [];
   lists: List[] = [];
 
-  constructor(private data: DataService, private dialog: MatDialog) {}
+  constructor(
+    private data: DataService,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
-    this.data.updateLoadingStatus(true);
+
     this.getIndividualShoppingListItems();
     this.data.getIndividualLists().then((lists) => {
+      this.data.removeDataInFlight('list');
       this.lists = <any[]>lists.data;
     });
-    this.data
-      .getCategories()
-      .then(
-        (categories: any) => (this.categories = categories.data.categories)
-      );
+    this.data.getCategories().then((categories: any) => {
+      this.data.removeDataInFlight('category');
+      this.categories = categories.data.categories;
+    });
   }
 
-  ngAfterContentInit(): void {}
-
-  ngAfterViewInit(): void {
-    this.data.updateLoadingStatus(false);
+  ngOnDestroy(): void {
+    this.itemsSub.unsubscribe();
   }
 
   resetForm(formDirective: FormGroupDirective): void {
@@ -98,14 +102,16 @@ export class ItemsComponent implements OnInit, AfterViewInit {
       category: this.categoryControl.value,
       list: this.listControl.value,
     };
-    this.data
-      .addIndividualShoppingListItem(newItem)
-      .then(() => this.getIndividualShoppingListItems());
+    this.data.addIndividualShoppingListItem(newItem).then(() => {
+      this.getIndividualShoppingListItems();
+      this.data.removeDataInFlight('item');
+    });
     this.resetForm(formDirective);
   }
 
   getIndividualShoppingListItems(filter: string | null = null): void {
     this.data.getIndividualItems(filter).then((result: any) => {
+      this.data.removeDataInFlight('item');
       this.IndividualItems = result.data;
     });
   }
@@ -145,6 +151,7 @@ export class ItemsComponent implements OnInit, AfterViewInit {
       list: this.listControl.value,
     };
     this.data.editIndividualShoppingListItem(data).then(() => {
+      this.data.removeDataInFlight('item');
       this.editingItem._id = '';
       this.resetForm(formDirective);
       this.getIndividualShoppingListItems('');
@@ -169,9 +176,10 @@ export class ItemsComponent implements OnInit, AfterViewInit {
         this.IndividualItems = this.IndividualItems.filter(
           (thisItem: Item) => thisItem._id !== item._id
         );
-        this.data
-          .deleteIndividualShoppingListItems([item._id])
-          .then(() => this.getIndividualShoppingListItems(''));
+        this.data.deleteIndividualShoppingListItems([item._id]).then(() => {
+          this.getIndividualShoppingListItems('');
+          this.data.removeDataInFlight('item');
+        });
       }
       sub.unsubscribe();
     });

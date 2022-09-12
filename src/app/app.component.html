@@ -1,25 +1,30 @@
 <app-navbar></app-navbar>
-<div *ngIf="showWelcome" class="welcome-message">
-  <div class="hello-msg">
-    {{
-      displayName.length
-        ? "Welcome, " + displayName + "!"
-        : "Please log in to continue."
-    }}
+<div id="main-body">
+  <div *ngIf="showWelcome && !isLoading && userData.name.length" class="welcome-message">
+    <div class="hello-msg">
+      {{ "Welcome, " + userData.name + "!" }}
+    </div>
+    <div class="btn-div">
+      <button
+        mat-raised-button
+        class="log-out-btn"
+        (click)="authService.SignOut()"
+        [disabled]="!authService.isLoggedIn"
+      >
+        Sign Out
+      </button>
+    </div>
   </div>
-  <div class="btn-div">
-    <button
-      mat-raised-button
-      class="log-out-btn"
-      (click)="authService.SignOut()"
-      [disabled]="!authService.isLoggedIn"
-    >
-      Sign Out
-    </button>
+
+  <div class="container bottom-padding">
+    <router-outlet></router-outlet>
   </div>
 </div>
-
-<div class="container bottom-padding">
-  <router-outlet *ngIf="!isLoading"></router-outlet>
+<div class="overlay" *ngIf="isLoading">
+  <mat-progress-spinner
+    diameter="75"
+    mode="indeterminate"
+    id="loading-indicator"
+  ></mat-progress-spinner>
 </div>
 <app-footer></app-footer>

@@ -5,5 +5,6 @@ import { SharedModule } from 'src/shared/shared.module';
 @NgModule({
   declarations: [ItemsRoutingModule.components],
   imports: [ItemsRoutingModule, SharedModule],
+  providers: []
 })
 export class ItemsModule {}

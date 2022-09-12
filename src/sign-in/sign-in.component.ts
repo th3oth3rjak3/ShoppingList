@@ -29,7 +29,6 @@ export class SignInComponent implements OnInit, AfterContentChecked, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.data.updateLoadingStatus(true);
     const url = this.route.snapshot.queryParams['returnUrl'];
     if (url?.length) {
       this.returnUrl = url;

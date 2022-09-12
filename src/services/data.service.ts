@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { FunctionsService } from './functions.service';
 import { User } from 'src/user/user.model';
 import { List } from 'src/list/list.model';
 import { HttpsCallableResult } from 'firebase/functions';
+
+export interface FlightData {
+  name: string;
+  count: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +33,7 @@ export class DataService {
   public isLoading: Observable<boolean> = this._isLoading.asObservable();
 
   authUserData: User = DataService.newUser;
+  dataInFlight: FlightData[] = [];
 
   constructor(private functions: FunctionsService) {}
 
@@ -36,13 +42,17 @@ export class DataService {
   }
 
   addUser() {
-    this.functions
-      .addUser(this.authUserData)
-      .then(() => this._userData.next(this.authUserData));
+    this.addDataInFlight('user');
+    this.functions.addUser(this.authUserData).then(() => {
+      this._userData.next(this.authUserData);
+      this.removeDataInFlight('user');
+    });
   }
 
   getUser() {
+    this.addDataInFlight('user');
     this.functions.getUser().then((user: any) => {
+      this.removeDataInFlight('user');
       if (user.data === 'no data') {
         this.addUser();
       } else {
@@ -52,12 +62,15 @@ export class DataService {
   }
 
   saveUser(userData: User): void {
-    this.functions.editUser(userData);
+    this.addDataInFlight('user');
+    this.functions.editUser(userData).then(() => this.removeDataInFlight('user'));
   }
 
   updateUser(userDetails: User) {
+    this.addDataInFlight('user');
     this.functions.editUser(userDetails).then(() => {
       this._userData.next(userDetails);
+      this.removeDataInFlight('user');
     });
   }
 
@@ -65,47 +78,117 @@ export class DataService {
     this._userData.next(DataService.newUser);
   }
 
-  updateLoadingStatus(loading: boolean) {
-    this._isLoading.next(loading);
+  updateLoadingStatus() {
+    if (this.dataInFlight.length) {
+      setTimeout(() => {
+        this._isLoading.next(true);
+      });
+    } else {
+      setTimeout(() => {
+        this._isLoading.next(false);
+      });
+    }
   }
 
   getIndividualItems(filter: string | null = null): Promise<any> {
+    this.addDataInFlight('item');
     return this.functions.getIndividualShoppingListItems(filter);
   }
 
   editIndividualShoppingListItem(data: any): Promise<HttpsCallableResult> {
+    this.addDataInFlight('item');
     return this.functions.editIndividualShoppingListItem(data);
   }
 
   addIndividualShoppingListItem(data: any): Promise<HttpsCallableResult> {
+    this.addDataInFlight('item');
     return this.functions.addIndividualShoppingListItem(data);
   }
 
-  deleteIndividualShoppingListItems(ids: string[]): Promise<HttpsCallableResult> {
+  deleteIndividualShoppingListItems(
+    ids: string[]
+  ): Promise<HttpsCallableResult> {
+    this.addDataInFlight('item');
     return this.functions.deleteIndividualShoppingListItems(ids);
   }
 
-  getIndividualLists(filter: string | null = null): Promise<HttpsCallableResult> {
+  getIndividualLists(
+    filter: string | null = null
+  ): Promise<HttpsCallableResult> {
+    this.addDataInFlight('list');
     return this.functions.getIndividualLists(filter);
   }
 
   addIndividualList(list: List): Promise<HttpsCallableResult> {
+    this.addDataInFlight('list');
     return this.functions.addIndividualList(list);
   }
 
   deleteIndividualList(id: string): Promise<HttpsCallableResult> {
+    this.addDataInFlight('list');
     return this.functions.deleteIndividualList(id);
   }
 
   editIndividualList(list: List): Promise<HttpsCallableResult> {
+    this.addDataInFlight('list');
     return this.functions.updateIndividualList(list);
   }
 
   getCategories(): Promise<HttpsCallableResult> {
+    this.addDataInFlight('category');
     return this.functions.getCategories();
   }
 
   addCategories(categories: string[]): Promise<HttpsCallableResult> {
+    this.addDataInFlight('category');
     return this.functions.addCategories(categories);
+  }
+
+  addDataInFlight(name: string): void {
+    let found = false;
+    for (let data of this.dataInFlight) {
+      if (data.name === name) {
+        data.count += 1;
+        found = true;
+        this.updateLoadingStatus();
+        break;
+      }
+    }
+    if (!found) {
+      const options = ['item', 'list', 'category', 'user'];
+      if (options.includes(name)) {
+        let newData: FlightData = {
+          name: name,
+          count: 1,
+        };
+        this.dataInFlight.push(newData);
+        this.updateLoadingStatus();
+      } else {
+        throw 'Invalid FlightData name.';
+      }
+    }
+  }
+
+  removeDataInFlight(name: string) {
+    let found = false;
+    for (let data of this.dataInFlight) {
+      if (data.name === name && data.count > 1) {
+        data.count -= 1;
+        found = true;
+        this.updateLoadingStatus();
+        break;
+      }
+      if (data.name === name && data.count === 1) {
+        this.dataInFlight = this.dataInFlight.filter(
+          (data: FlightData) => data.name !== name
+        );
+        this.updateLoadingStatus();
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      throw "Trying to remove FlightData that doesn't exist.";
+    }
   }
 }

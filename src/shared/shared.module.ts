@@ -22,6 +22,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 // Pipes
 import { DomSanitizerPipe } from 'src/pipes/dom-sanitizer.pipe';
@@ -51,7 +52,8 @@ import { DomSanitizerPipe } from 'src/pipes/dom-sanitizer.pipe';
     RouterModule,
     LayoutModule,
     MatDialogModule,
-    DomSanitizerPipe
+    DomSanitizerPipe,
+    MatProgressSpinnerModule
   ],
   providers: [MatBottomSheet],
 })

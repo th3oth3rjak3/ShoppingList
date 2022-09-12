@@ -4,6 +4,7 @@
   </div>
   <div class="row">
     <div class="col">
+      <h3 *ngIf="!displayCategories.length">It looks like you haven't added any items yet.</h3>
       <div
         class="categories"
         *ngFor="let category of displayCategories; let j = index"

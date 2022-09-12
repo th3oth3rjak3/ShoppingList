@@ -21,7 +21,7 @@ import { AuthService } from 'src/services/auth.service';
     AppRoutingModule,
     BrowserAnimationsModule,
   ],
-  providers: [AuthService, DataService, FunctionsService, AuthGuard],
+  providers: [DataService, AuthService, FunctionsService, AuthGuard],
   exports: [ComponentsModule],
   bootstrap: [AppComponent],
 })

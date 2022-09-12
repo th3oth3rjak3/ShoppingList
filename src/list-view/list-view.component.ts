@@ -29,24 +29,23 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
   ) {}
 
   ngOnInit(): void {
-    this.data.updateLoadingStatus(true);
     this.getIndividualLists();
   }
 
-  ngAfterContentChecked(): void {
-    this.data.updateLoadingStatus(false);
-  }
+  ngAfterContentChecked(): void {}
 
   getIndividualLists(): void {
     this.data.getIndividualLists().then((lists) => {
+      this.data.removeDataInFlight('list');
       this.lists = <List[]>lists.data;
     });
   }
 
   deleteIndividualList(listId: string): void {
-    this.data
-      .deleteIndividualList(listId)
-      .then(() => this.getIndividualLists());
+    this.data.deleteIndividualList(listId).then(() => {
+      this.getIndividualLists();
+      this.data.removeDataInFlight('list');
+    });
   }
 
   navigate(path: string): void {
@@ -66,6 +65,7 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
         this.data.addIndividualList(listData).then(() => {
           this.getIndividualLists();
           sub.unsubscribe();
+          this.data.removeDataInFlight('list');
         });
       }
     });
@@ -83,10 +83,9 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     const sub = sheet.afterDismissed().subscribe((listData: List) => {
       if (listData) {
         this.data.editIndividualList(listData).then(() => {
-          this.data.getIndividualLists().then(() => {
-            this.getIndividualLists();
-            sub.unsubscribe();
-          });
+          this.data.removeDataInFlight('list');
+          this.getIndividualLists();
+          sub.unsubscribe();
         });
       }
     });
@@ -96,7 +95,7 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     const config = new MatBottomSheetConfig();
     const data: DeleteListBottomSheetData = {
       type: 'delete-list',
-      lists: this.lists
+      lists: this.lists,
     };
     config.data = data;
     config.autoFocus = true;
@@ -104,20 +103,28 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     const sub = sheet.afterDismissed().subscribe((id: string) => {
       if (id) {
         this.lists = this.lists.filter((list: List) => list._id !== id);
-        this.data.getIndividualItems(id).then((items) => {
-          const theseItems = items.data.filter((item: Item) => item.list === id);
-          let itemIdsToDelete: string[] = [];
-          theseItems.forEach((item: Item) => {
-            if (item.list === id){
-              itemIdsToDelete.push(item._id);
+        this.data
+          .getIndividualItems(id)
+          .then((items) => {
+            this.data.removeDataInFlight('item');
+            const theseItems = items.data.filter(
+              (item: Item) => item.list === id
+            );
+            let itemIdsToDelete: string[] = [];
+            theseItems.forEach((item: Item) => {
+              if (item.list === id) {
+                itemIdsToDelete.push(item._id);
+              }
+            });
+            if (itemIdsToDelete.length) {
+              this.data.deleteIndividualShoppingListItems(itemIdsToDelete).then(() => {
+                this.data.removeDataInFlight('item');
+              });
             }
+          })
+          .then(() => {
+            this.deleteIndividualList(id);
           });
-          if (itemIdsToDelete.length){
-            this.data.deleteIndividualShoppingListItems(itemIdsToDelete);
-          }
-        }).then(() => {
-          this.deleteIndividualList(id);
-        });
         sub.unsubscribe();
       }
     });

@@ -57,7 +57,10 @@ export class CategoriesComponent implements OnInit {
     this.categories = this.categories.filter(
       (newCategory: string) => newCategory !== category
     );
-    this.data.addCategories(this.categories).then(() => this.getCategories());
+    this.data.addCategories(this.categories).then(() => {
+      this.getCategories();
+      this.data.removeDataInFlight('category');
+    });
   }
 
   categoryExists(): boolean {
@@ -72,13 +75,19 @@ export class CategoriesComponent implements OnInit {
   addCategory(form: FormGroupDirective) {
     if (!this.categoryExists()) {
       this.categories.push(this.addCategoryName.value);
-      this.data.addCategories(this.categories).then(() => this.getCategories());
+      this.data.addCategories(this.categories).then(() => {
+        this.getCategories();
+        this.data.removeDataInFlight('category');
+      });
       form.resetForm();
     }
   }
   editCategory(form: FormGroupDirective) {
     this.categories.push(this.addCategoryName.value);
-    this.data.addCategories(this.categories).then(() => this.getCategories());
+    this.data.addCategories(this.categories).then(() => {
+      this.getCategories();
+      this.data.removeDataInFlight('category');
+    });
     this.editing = false;
     form.resetForm();
   }
@@ -94,6 +103,7 @@ export class CategoriesComponent implements OnInit {
   getCategories(): void {
     this.data.getCategories().then((categories: any) => {
       this.categories = categories.data.categories;
+      this.data.removeDataInFlight('category');
     });
   }
 
@@ -118,13 +128,13 @@ export class CategoriesComponent implements OnInit {
     const data: ConfirmationDialogData = {
       title: `Delete Category?`,
       description: [`Are you sure you wish to delete '${category}'?`],
-      confirmButtonText: "Delete",
-      denyButtonText: "Cancel"
-      }
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
     const config: MatDialogConfig = {
       data: data,
-      autoFocus: true
-    }
+      autoFocus: true,
+    };
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, config);
     const sub = dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
@@ -133,5 +143,4 @@ export class CategoriesComponent implements OnInit {
       sub.unsubscribe();
     });
   }
-
 }

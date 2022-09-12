@@ -7,15 +7,11 @@ import { DataService } from 'src/services/data.service';
   styleUrls: ['./home.component.sass'],
 })
 export class HomeComponent implements OnInit, AfterViewInit {
-
-  constructor(private data: DataService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.data.updateLoadingStatus(true);
   }
 
   ngAfterViewInit(): void {
-      this.data.updateLoadingStatus(false);
   }
-  
 }

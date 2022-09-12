@@ -39,18 +39,17 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listId = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
-    this.data.getIndividualLists(this.listId).then((list: any) => {
-      this.list = <List>list.data[0];
+    this.data.getIndividualLists().then((lists: any) => {
+      this.lists = <List[]>lists.data;
+      this.list = this.lists.filter((list) => list._id === this.listId)[0];
+      this.data.removeDataInFlight('list');
     });
     this.data.getCategories().then((categories: any) => {
       if (categories.data.categories.length) {
         this.categories = categories.data.categories;
+        this.data.removeDataInFlight('category');
       }
     });
-    this.data.getIndividualLists().then((lists: any) => {
-      this.lists = <List[]>lists.data;
-    });
-
     this.getItems();
   }
 
@@ -105,6 +104,7 @@ export class ListComponent implements OnInit {
     this.data.getIndividualItems(this.listId).then((items) => {
       this.items = <Item[]>items.data;
       this.listItems = this.toListItems(this.items);
+      this.data.removeDataInFlight('item');
     });
   }
 
@@ -116,6 +116,7 @@ export class ListComponent implements OnInit {
     if (deletedIds.length) {
       this.data.deleteIndividualShoppingListItems(deletedIds).then(() => {
         this.getItems();
+        this.data.removeDataInFlight('item');
       });
     }
   }
@@ -157,6 +158,7 @@ export class ListComponent implements OnInit {
         this.data.editIndividualShoppingListItem(itemData).then(() => {
           this.getItems();
           sub.unsubscribe();
+          this.data.removeDataInFlight('item');
         });
       } else {
         sub.unsubscribe();
@@ -177,6 +179,7 @@ export class ListComponent implements OnInit {
         this.data.deleteIndividualShoppingListItems([id]).then(() => {
           this.getItems();
           sub.unsubscribe();
+          this.data.removeDataInFlight('item');
         });
       }
     });
@@ -197,6 +200,7 @@ export class ListComponent implements OnInit {
         this.data.addIndividualShoppingListItem(itemData).then(() => {
           this.getItems();
           sub.unsubscribe();
+          this.data.removeDataInFlight('item');
         });
       }
     });
