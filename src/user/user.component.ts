@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/services/auth.service';
@@ -10,7 +10,7 @@ import { User } from './user.model';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.sass'],
 })
-export class UserComponent implements OnInit, OnDestroy {
+export class UserComponent implements OnInit, OnDestroy, AfterViewInit {
   userData: User = DataService.newUser;
   sub: Subscription = new Subscription();
   editing: boolean = false;
@@ -50,6 +50,9 @@ export class UserComponent implements OnInit, OnDestroy {
       this.userData = user;
       this.updateEditFieldData();
     });
+  }
+
+  ngAfterViewInit(): void {
   }
 
   updateEditFieldData(): void {

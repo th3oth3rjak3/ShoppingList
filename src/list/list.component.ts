@@ -23,8 +23,8 @@ import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/
 })
 export class ListComponent implements OnInit {
   list: List | null = null;
-  items: Item[] = [];
-  listItems: ListItem[] = [];
+  items: Item[] | null = null;
+  listItems: ListItem[] | null = null;
   listId: string = '';
   displayCategories: string[] = [];
   categories: string[] = [];
@@ -54,9 +54,9 @@ export class ListComponent implements OnInit {
   }
 
   filteredItems(category: string): ListItem[] {
-    let filteredListItems = this.listItems.filter(
+    let filteredListItems = this.listItems?.filter(
       (listItem: ListItem) => listItem.category === category
-    );
+    ) ?? [];
 
     filteredListItems = filteredListItems.sort((a, b) => {
       if (a.name < b.name) {
@@ -110,10 +110,10 @@ export class ListComponent implements OnInit {
 
   finishShopping(): void {
     const deletedIds: string[] = [];
-    this.listItems.map((listItem: ListItem) => {
+    this.listItems?.map((listItem: ListItem) => {
       listItem.purchased ? deletedIds.push(listItem._id) : null;
     });
-    if (deletedIds.length) {
+    if (deletedIds.length > 0) {
       this.data.deleteIndividualShoppingListItems(deletedIds).then(() => {
         this.getItems();
         this.data.removeDataInFlight('item');
@@ -147,7 +147,7 @@ export class ListComponent implements OnInit {
     const data: EditItemBottomSheetData = {
       type: 'edit-item',
       categories: this.categories,
-      items: this.listItems,
+      items: this.listItems ?? [],
       lists: this.lists,
     };
     config.data = data;
@@ -169,7 +169,7 @@ export class ListComponent implements OnInit {
     const config = new MatBottomSheetConfig();
     const data: DeleteItemBottomSheetData = {
       type: 'delete-item',
-      items: this.listItems,
+      items: this.listItems ?? [],
     };
     config.data = data;
     config.autoFocus = true;

@@ -34,6 +34,7 @@ export class DataService {
 
   authUserData: User = DataService.newUser;
   dataInFlight: FlightData[] = [];
+  lastLoadingStatus: boolean = true;
 
   constructor(private functions: FunctionsService) {}
 
@@ -82,10 +83,12 @@ export class DataService {
     if (this.dataInFlight.length) {
       setTimeout(() => {
         this._isLoading.next(true);
+        this.lastLoadingStatus = true;
       });
     } else {
       setTimeout(() => {
         this._isLoading.next(false);
+        this.lastLoadingStatus = false;
       });
     }
   }

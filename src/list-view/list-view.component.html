@@ -3,8 +3,8 @@
     <h1 class="header">My Lists</h1>
   </div>
   <div class="row">
-    <h3 *ngIf="!lists.length">
-      It looks like you haven't added any lists yet.
+    <h3 class="empty-list" *ngIf="lists && lists.length === 0">
+      So empty...
     </h3>
   </div>
   <div class="row" *ngFor="let list of lists; let i = index">

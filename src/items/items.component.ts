@@ -1,10 +1,7 @@
 import {
-  AfterViewInit,
   Component,
-  OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges,
 } from '@angular/core';
 import {
   FormControl,
@@ -13,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConfirmationDialogData } from 'src/components/confirmation-dialog/confirmation-dialog-model';
 import { ConfirmationDialogComponent } from 'src/components/confirmation-dialog/confirmation-dialog.component';

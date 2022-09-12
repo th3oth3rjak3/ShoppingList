@@ -19,13 +19,13 @@ import { Item } from 'src/items/item.model';
   styleUrls: ['./list-view.component.sass'],
 })
 export class ListViewComponent implements OnInit, AfterContentChecked {
-  lists: List[] = [];
+  lists: List[] | null = null;
   sub: Subscription = new Subscription();
 
   constructor(
     private _bottomSheet: MatBottomSheet,
     private router: Router,
-    private data: DataService
+    public data: DataService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +75,7 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     const config = new MatBottomSheetConfig();
     const data: EditListBottomSheetData = {
       type: 'edit-list',
-      lists: this.lists,
+      lists: this.lists ?? [],
     };
     config.data = data;
     config.autoFocus = true;
@@ -95,14 +95,14 @@ export class ListViewComponent implements OnInit, AfterContentChecked {
     const config = new MatBottomSheetConfig();
     const data: DeleteListBottomSheetData = {
       type: 'delete-list',
-      lists: this.lists,
+      lists: this.lists ?? [],
     };
     config.data = data;
     config.autoFocus = true;
     let sheet = this._bottomSheet.open(BottomSheetComponent, config);
     const sub = sheet.afterDismissed().subscribe((id: string) => {
       if (id) {
-        this.lists = this.lists.filter((list: List) => list._id !== id);
+        //this.lists = this.lists?.filter((list: List) => list._id !== id) ?? [];
         this.data
           .getIndividualItems(id)
           .then((items) => {
